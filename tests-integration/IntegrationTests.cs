@@ -44,7 +44,7 @@ namespace OpenChat.Tests.Integration
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
             dynamic response = await GetResponseFrom(httpResponse);
-            Assert.NotEqual(Guid.Empty, Guid.Parse(response.userId));
+            Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.userId));
             Assert.Equal("Alice", (string)response.username);
             Assert.Equal("I love playing the piano and travelling.", (string)response.about);
         }
