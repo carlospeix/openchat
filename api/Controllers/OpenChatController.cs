@@ -1,28 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Text.Json;
 
 namespace OpenChat.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class OpenChatController : ControllerBase
     {
-        private readonly ILogger<OpenChatController> _logger;
+        private readonly ILogger<OpenChatController> logger;
 
         public OpenChatController(ILogger<OpenChatController> logger)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
-        [HttpGet]
-		public object Get()
+        [HttpGet("/openchat/")]
+		public object GetStatus()
 		{
 			var responseObject = new
             {
-				Status = "Up"
+				status = "Up"
 			};
 
-			_logger.LogInformation($"Status pinged: {responseObject.Status}");
+			logger.LogInformation($"Status pinged: {responseObject.status}");
 			
             return responseObject;
 		}
