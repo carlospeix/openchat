@@ -53,7 +53,7 @@ namespace OpenChat.Tests.Integration
         public async Task GetRoot_ReturnsSuccessAndStatusUp()
         {
             // Act
-            var httpResponse = await _client.GetAsync("/");
+            var httpResponse = await _client.GetAsync("/openchat/");
 
             // Assert
             httpResponse.EnsureSuccessStatusCode();

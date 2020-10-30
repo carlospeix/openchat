@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 namespace OpenChat.Api.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("[controller]")]
     public class OpenChatController : ControllerBase
     {
         private readonly ILogger<OpenChatController> _logger;
