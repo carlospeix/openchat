@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace OpenChat.Api
+namespace OpenChat.Model
 {
     public class RestDispatcher
     {
-        private const int HTTP_CREATED = 201;
+        public const int HTTP_CREATED = 201;
 
         public DispatcherResponse RegisterUser(string userName, string password, string about)
         {

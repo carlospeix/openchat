@@ -5,5 +5,13 @@
     <RootNamespace>OpenChat.Api</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\openchat-model\openchat-model.csproj" />
+  </ItemGroup>
+
 
 </Project>

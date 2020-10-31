@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openchat-api", "api\openchat-api.csproj", "{2183A060-B299-4AF5-AF8B-31D561124568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "openchat-api", "api\openchat-api.csproj", "{2183A060-B299-4AF5-AF8B-31D561124568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openchat-tests-integration", "tests-integration\openchat-tests-integration.csproj", "{A6946470-A1B5-4EE9-A04A-4199C0A6F556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "openchat-tests-integration", "tests-integration\openchat-tests-integration.csproj", "{A6946470-A1B5-4EE9-A04A-4199C0A6F556}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openchat-tests", "openchat-tests\openchat-tests.csproj", "{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openchat-model", "openchat-model\openchat-model.csproj", "{D7C5B69B-2E07-4F1B-9816-978742E5AE06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2183A060-B299-4AF5-AF8B-31D561124568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +45,35 @@ Global
 		{A6946470-A1B5-4EE9-A04A-4199C0A6F556}.Release|x64.Build.0 = Release|Any CPU
 		{A6946470-A1B5-4EE9-A04A-4199C0A6F556}.Release|x86.ActiveCfg = Release|Any CPU
 		{A6946470-A1B5-4EE9-A04A-4199C0A6F556}.Release|x86.Build.0 = Release|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Debug|x64.Build.0 = Debug|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Debug|x86.Build.0 = Debug|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Release|x64.ActiveCfg = Release|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Release|x64.Build.0 = Release|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Release|x86.ActiveCfg = Release|Any CPU
+		{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}.Release|x86.Build.0 = Release|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Debug|x64.Build.0 = Debug|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Debug|x86.Build.0 = Debug|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Release|x64.ActiveCfg = Release|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Release|x64.Build.0 = Release|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Release|x86.ActiveCfg = Release|Any CPU
+		{D7C5B69B-2E07-4F1B-9816-978742E5AE06}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3CDBB10-B6A7-47E2-9815-07305B2C0C1A}
 	EndGlobalSection
 EndGlobal
