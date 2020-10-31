@@ -19,6 +19,7 @@ namespace OpenChat.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
+                .AddNewtonsoftJson()
                 .AddJsonOptions(options =>
                     {
                         options.JsonSerializerOptions.IgnoreNullValues = true;

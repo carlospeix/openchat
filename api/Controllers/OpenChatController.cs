@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using OpenChat.Model;
 
 namespace OpenChat.Api.Controllers
 {
@@ -31,18 +29,14 @@ namespace OpenChat.Api.Controllers
 		}
 
         [HttpPost("/openchat/registration")]
-        public IActionResult UserRegistration([FromBody] JsonElement value)
+        public IActionResult UserRegistration([FromBody] RegistrationRequest request)
         {
-            var userName = value.GetProperty("username").GetString();
-            var password = value.GetProperty("password").GetString();
-            var about = value.GetProperty("about").GetString();
-
-            var response = dispatcher.RegisterUser(userName, password, about);
+            var response = dispatcher.RegisterUser(request);
 
             var result = 
                 new ObjectResult(response.Content)
                 {
-                    StatusCode = response.Status,
+                    StatusCode = response.Status
                 };
 
             return result;
