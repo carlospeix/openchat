@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OpenChat.Model
+﻿namespace OpenChat.Model
 {
     public class OpenChatSystem
     {

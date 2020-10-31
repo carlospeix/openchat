@@ -1,9 +1,7 @@
-using Newtonsoft.Json;
-using OpenChat.Api;
-using OpenChat.Model;
 using System;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using Xunit;
+using OpenChat.Api;
 
 namespace OpenChat.Tests.Integration
 {

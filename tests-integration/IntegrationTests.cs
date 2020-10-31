@@ -7,7 +7,6 @@ using Xunit;
 using System.Net;
 using System;
 using System.Text;
-using System.Dynamic;
 
 namespace OpenChat.Tests.Integration
 {
@@ -31,12 +30,8 @@ namespace OpenChat.Tests.Integration
         public async Task User_RegisterNewUserSuccess()
         {
             // Arrange
-            var content = GetContentFrom(new
-            {
-                username = "Alice",
-                password = "alki324d",
-                about = "I love playing the piano and travelling."
-            });
+            var alice = new { username = "Alice", password = "alki324d", about = "I love playing the piano and travelling." };
+            var content = GetContentFrom(alice);
 
             // Act
             var httpResponse = await _client.PostAsync("/openchat/registration", content);
@@ -45,8 +40,8 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
             dynamic response = await GetResponseFrom(httpResponse);
             Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.userId));
-            Assert.Equal("Alice", (string)response.username);
-            Assert.Equal("I love playing the piano and travelling.", (string)response.about);
+            Assert.Equal(alice.username, (string)response.username);
+            Assert.Equal(alice.about, (string)response.about);
         }
 
         [Fact]
@@ -63,7 +58,8 @@ namespace OpenChat.Tests.Integration
 
         private HttpContent GetContentFrom(object content)
         {
-            return new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+            return new StringContent(
+                JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
         }
 
         private async Task<dynamic> GetResponseFrom(HttpResponseMessage httpResponse)
