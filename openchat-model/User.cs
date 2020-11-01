@@ -8,7 +8,13 @@ namespace OpenChat.Model
         private readonly string name;
         private readonly string about;
 
-        public static User Create(string name, string about) => new User(name, about);
+        public static User Create(string name, string about)
+        {
+            if (String.IsNullOrWhiteSpace(name))
+                throw new InvalidOperationException("Can't create user with empty name.");
+
+            return new User(name, about);
+        }
 
         public User(string name, string about)
         {
