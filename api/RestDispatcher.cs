@@ -18,7 +18,7 @@ namespace OpenChat.Api
         {
             var user = system.RegisterUser(request.username, request.password, request.about);
 
-            var result = UserResult.From(user);
+            var result = new UserResult(user);
 
             return new DispatcherResponse(HTTP_CREATED, result);
         }
@@ -41,31 +41,29 @@ namespace OpenChat.Api
 
     public class RegistrationRequest
     {
-        public string username;
-        public string password;
-        public string about;
-
         public RegistrationRequest(string userName, string password, string about)
         {
             this.username = userName;
             this.password = password;
             this.about = about;
         }
+
+        public string username;
+        public string password;
+        public string about;
     }
+
     public class UserResult
     {
+        public UserResult(User user)
+        {
+            userId = user.Id;
+            username = user.Name;
+            about = user.About;
+        }
+
         public Guid userId;
         public string username;
         public string about;
-
-        public static UserResult From(User user)
-        {
-            return new UserResult()
-            {
-                userId = user.Id,
-                username = user.Name,
-                about = user.About
-            };
-        }
     }
 }
