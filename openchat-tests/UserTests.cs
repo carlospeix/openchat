@@ -21,7 +21,7 @@ namespace OpenChat.Tests
                 () => User.Create("", "")
             );
 
-            Assert.Equal("Can't create user with empty name.", exception.Message);
+            Assert.Equal(User.MSG_CANT_CREATE_USER_WITHEMPTY_NAME, exception.Message);
         }
 
         [Fact]

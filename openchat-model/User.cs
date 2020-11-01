@@ -4,27 +4,30 @@ namespace OpenChat.Model
 {
     public class User
     {
-        private readonly Guid id;
-        private readonly string name;
-        private readonly string about;
+        public const string MSG_CANT_CREATE_USER_WITHEMPTY_NAME = "Can't create user with empty name.";
+
+        public Guid Id { get; }
+        public string Name { get; }
+        public string About { get; }
 
         public static User Create(string name, string about)
         {
-            if (String.IsNullOrWhiteSpace(name))
-                throw new InvalidOperationException("Can't create user with empty name.");
+            AssertNameNotEmpty(name);
 
             return new User(name, about);
         }
 
-        private User(string name, string about)
+        private static void AssertNameNotEmpty(string name)
         {
-            this.id = Guid.NewGuid();
-            this.name = name;
-            this.about = about;
+            if (String.IsNullOrWhiteSpace(name))
+                throw new InvalidOperationException(MSG_CANT_CREATE_USER_WITHEMPTY_NAME);
         }
 
-        public Guid Id => id;
-        public string Name => name;
-        public string About => about;
+        private User(string name, string about)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            About = about;
+        }
     }
 }
