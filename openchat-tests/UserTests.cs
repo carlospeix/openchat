@@ -23,5 +23,16 @@ namespace OpenChat.Tests
 
             Assert.Equal("Can't create user with empty name.", exception.Message);
         }
+
+        [Fact]
+        public void NewUserHasProperNameAboutAndId()
+        {
+            var newUser = User.Create("Carlos", "About Carlos");
+
+            Assert.NotEqual(Guid.Empty, newUser.Id);
+            Assert.Equal("Carlos", newUser.Name);
+            Assert.Equal("About Carlos", newUser.About);
+        }
+
     }
 }

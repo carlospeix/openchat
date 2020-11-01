@@ -16,7 +16,7 @@ namespace OpenChat.Model
             return new User(name, about);
         }
 
-        public User(string name, string about)
+        private User(string name, string about)
         {
             this.id = Guid.NewGuid();
             this.name = name;
