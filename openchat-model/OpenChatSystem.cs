@@ -15,29 +15,37 @@ namespace OpenChat.Model
 
         public User RegisterUser(string userName, string password, string about = "")
         {
-            if (registeredUsers.Any(user => user.Name.Equals(userName)))
-                throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
-
-            if (String.IsNullOrWhiteSpace(password))
-                throw new InvalidOperationException(MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD);
-
+            AssertNewUserNameDoesntExist(userName);
+            AsserPasswordNotEmpty(password);
 
             var user = User.Create(userName, about);
 
             registeredUsers.Add(user);
             registeredCredentials.Add(user, password);
-            
+
             return user;
         }
 
-        public User LoginUser(string userName, string password)
+        private void AssertNewUserNameDoesntExist(string userName)
+        {
+            if (registeredUsers.Any(user => user.Name.Equals(userName)))
+                throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
+        }
+
+        private static void AsserPasswordNotEmpty(string password)
+        {
+            if (String.IsNullOrWhiteSpace(password))
+                throw new InvalidOperationException(MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD);
+        }
+
+        public void LoginUser(string userName, string password, Action<User> success, Action<string> fail)
         {
             var user = registeredUsers.Find(user => user.Name.Equals(userName));
 
-            if (user == null || !registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.Equals(password)))
-                throw new InvalidOperationException(MSG_INVALID_CREDENTIALS);
-
-            return user;
+            if (user != null && registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.Equals(password)))
+                success(user);
+            else
+                fail(MSG_INVALID_CREDENTIALS);
         }
     }
 }

@@ -34,18 +34,14 @@ namespace OpenChat.Api
 
         public DispatcherResponse Login(LoginRequest request)
         {
-            try
-            {
-                var user = system.LoginUser(request.username, request.password);
+            DispatcherResponse response = null;
+            
+            system.LoginUser(request.username, request.password,
+                (user) => response = new DispatcherResponse(HTTP_OK, new UserResult(user)),
+                (message) => response = new DispatcherResponse(HTTP_BAD_REQUEST, message));
 
-                var result = new UserResult(user);
-                return new DispatcherResponse(HTTP_OK, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return new DispatcherResponse(HTTP_BAD_REQUEST, ex.Message);
-            }
-        }
+            return response;
+       }
     }
 
     public class DispatcherResponse
