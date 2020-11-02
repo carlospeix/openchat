@@ -13,10 +13,12 @@ namespace OpenChat.Tests.Integration
     public class ControllerTests
     {
         private readonly OpenChatController controller;
+        private readonly RegistrationRequest aliceRegistrationRequest;
 
         public ControllerTests()
         {
             controller = new OpenChatController(new RestDispatcher());
+            aliceRegistrationRequest = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
         }
 
         [Fact]
@@ -24,18 +26,15 @@ namespace OpenChat.Tests.Integration
         // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing the piano and travelling." }
         public void User_RegisterNewUserSuccess()
         {
-            // Arrange
-            var alice = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
-
             // Act
-            var result = controller.Registration(alice) as ObjectResult;
+            var result = controller.Registration(aliceRegistrationRequest) as ObjectResult;
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, (HttpStatusCode)result.StatusCode);
             var userResult = (UserResult)result.Value;
             Assert.NotEqual(Guid.Empty, userResult.userId);
-            Assert.Equal(alice.username, userResult.username);
-            Assert.Equal(alice.about, userResult.about);
+            Assert.Equal(aliceRegistrationRequest.username, userResult.username);
+            Assert.Equal(aliceRegistrationRequest.about, userResult.about);
         }
 
         [Fact]
@@ -46,11 +45,10 @@ namespace OpenChat.Tests.Integration
         public void User_RegisterSameUserTwiceFails()
         {
             // Arrange
-            var alice = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
-            _ = controller.Registration(alice) as ObjectResult;
+            _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
 
             // Act
-            var result = controller.Registration(alice) as ObjectResult;
+            var result = controller.Registration(aliceRegistrationRequest) as ObjectResult;
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
@@ -64,9 +62,8 @@ namespace OpenChat.Tests.Integration
         public void User_LoginSuccess()
         {
             // Arrange
-            var alice = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
-            _ = controller.Registration(alice) as ObjectResult;
-            var login = new LoginRequest(alice.username, alice.password);
+            _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var login = new LoginRequest(aliceRegistrationRequest.username, aliceRegistrationRequest.password);
 
             // Act
             var result = controller.Login(login) as ObjectResult;
@@ -74,8 +71,8 @@ namespace OpenChat.Tests.Integration
             // Assert
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
             var userResult = (UserResult)result.Value;
-            Assert.Equal(alice.username, userResult.username);
-            Assert.Equal(alice.about, userResult.about);
+            Assert.Equal(aliceRegistrationRequest.username, userResult.username);
+            Assert.Equal(aliceRegistrationRequest.about, userResult.about);
         }
 
         [Fact]
@@ -84,9 +81,8 @@ namespace OpenChat.Tests.Integration
         public void User_LoginFail()
         {
             // Arrange
-            var alice = new RegistrationRequest("Alice", "password", "I love playing the piano and travelling.");
-            _ = controller.Registration(alice) as ObjectResult;
-            var login = new LoginRequest(alice.username, alice.password + "-X");
+            _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var login = new LoginRequest(aliceRegistrationRequest.username, aliceRegistrationRequest.password + "-X");
 
             // Act
             var result = controller.Login(login) as ObjectResult;

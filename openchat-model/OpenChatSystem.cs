@@ -25,12 +25,6 @@ namespace OpenChat.Model
             return user;
         }
 
-        private void AssertNewUserNameDoesntExist(string userName)
-        {
-            if (registeredUsers.Any(user => user.Name.Equals(userName)))
-                throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
-        }
-
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
         {
             var user = registeredUsers.Find(user => user.Name.Equals(userName));
@@ -39,6 +33,12 @@ namespace OpenChat.Model
                 return success(user);
             else
                 return fail(MSG_INVALID_CREDENTIALS);
+        }
+
+        private void AssertNewUserNameDoesntExist(string userName)
+        {
+            if (registeredUsers.Any(user => user.Name.Equals(userName)))
+                throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
         }
     }
 }

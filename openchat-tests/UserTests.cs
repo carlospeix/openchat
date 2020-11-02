@@ -6,12 +6,25 @@ namespace OpenChat.Tests
 {
     public class UserTests
     {
-        [Fact]
-        public void CanCreateNewUserWithNameAndAbout()
-        {
-            var newUser = User.Create("Carlos", "About Carlos");
+        private User carlos;
 
-            Assert.NotNull(newUser);
+        public UserTests()
+        {
+            carlos = User.Create("Carlos", "About Carlos");
+        }
+
+        [Fact]
+        public void CanCreateNewUser()
+        {
+            Assert.NotNull(carlos);
+        }
+
+        [Fact]
+        public void NewUserHasProperNameAboutAndId()
+        {
+            Assert.NotEqual(Guid.Empty, carlos.Id);
+            Assert.Equal("Carlos", carlos.Name);
+            Assert.Equal("About Carlos", carlos.About);
         }
 
         [Fact]
@@ -23,16 +36,5 @@ namespace OpenChat.Tests
 
             Assert.Equal(User.MSG_CANT_CREATE_USER_WITH_EMPTY_NAME, exception.Message);
         }
-
-        [Fact]
-        public void NewUserHasProperNameAboutAndId()
-        {
-            var newUser = User.Create("Carlos", "About Carlos");
-
-            Assert.NotEqual(Guid.Empty, newUser.Id);
-            Assert.Equal("Carlos", newUser.Name);
-            Assert.Equal("About Carlos", newUser.About);
-        }
-
     }
 }

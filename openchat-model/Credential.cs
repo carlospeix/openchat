@@ -14,6 +14,7 @@ namespace OpenChat.Model
 
             return new Credential(password);
         }
+
         private Credential(string password)
         {
             this.password = password;

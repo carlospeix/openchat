@@ -20,7 +20,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void EnsurePasswordIsNotEmpty()
+        public void CantRegisterUserWithEmptyPassword()
         {
             var system = new OpenChatSystem();
             var exception = Assert.Throws<InvalidOperationException>(

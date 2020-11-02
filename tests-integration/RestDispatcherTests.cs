@@ -6,11 +6,16 @@ namespace OpenChat.Tests.Integration
 {
     public class RestDispatcherTests
     {
+        private readonly RestDispatcher dispatcher;
+
+        public RestDispatcherTests()
+        {
+            dispatcher = new RestDispatcher();
+        }
+
         [Fact]
         public void UserCreationSucceeds()
         {
-            var dispatcher = new RestDispatcher();
-
             var request = new RegistrationRequest("Carlos", "Pass0rd!", "I like to sail in the open sea.");
 
             var response = dispatcher.RegisterUser(request);
@@ -27,7 +32,6 @@ namespace OpenChat.Tests.Integration
         [Fact]
         public void UserCreationWithExistingNameFails()
         {
-            var dispatcher = new RestDispatcher();
             var request = new RegistrationRequest("Carlos", "Pass0rd!", "I like to sail in the open sea.");
 
             _ = dispatcher.RegisterUser(request);
