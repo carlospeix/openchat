@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using OpenChat.Model;
+using System;
 using Xunit;
 
 namespace OpenChat.Tests
@@ -16,6 +17,17 @@ namespace OpenChat.Tests
 
             var json = JsonConvert.SerializeObject(user);
             Assert.DoesNotContain("Pass0rd!", json);
+        }
+
+        [Fact]
+        public void EnsurePasswordIsNotEmpty()
+        {
+            var system = new OpenChatSystem();
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => system.RegisterUser("Carlos", "")
+            );
+
+            Assert.Equal(OpenChatSystem.MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD, exception.Message);
         }
     }
 }
