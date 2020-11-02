@@ -24,12 +24,12 @@ namespace OpenChat.Tests.Integration
         }
 
         [Fact]
-        // POST - openchat/registration { "username" : "Mark", "password" : "alki324d", "about" : "I love playing the piano and travelling." }
+        // POST - openchat/registration { "username" : "Alice", "password" : "alki324d", "about" : "I love playing the piano and travelling." }
         // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Mark", "about" : "I love playing the piano and travelling." }
         public async Task User_RegisterNewUserSuccess()
         {
             // Arrange
-            var alice = new { username = "Mark", password = "alki324d", about = "I love playing the piano and travelling." };
+            var alice = new { username = "Alice", password = "alki324d", about = "I love playing the piano and travelling." };
             var content = GetContentFrom(alice);
 
             // Act
@@ -41,22 +41,6 @@ namespace OpenChat.Tests.Integration
             Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.userId));
             Assert.Equal(alice.username, (string)response.username);
             Assert.Equal(alice.about, (string)response.about);
-        }
-
-        [Fact]
-        // POST - openchat/registration { "username" : "Alice", "password" : "alki324d", "about" : "I love playing piano." }
-        // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing piano." }
-        // POST - openchat/registration { "username" : "Alice", "password" : "alki324d", "about" : "I love playing chess." }
-        // Failure Status: BAD_REQUEST - 400 Response: "Username already in use."
-        public async Task User_RegisterSameUserTwiceFails()
-        {
-            var alicePiano = new { username = "Alice", password = "password1", about = "I love playing piano." };
-            var aliceChess = new { username = "Alice", password = "password2", about = "I love playing chess." };
-            _ = await client.PostAsync("/openchat/registration", GetContentFrom(alicePiano));
-            
-            var httpResponse = await client.PostAsync("/openchat/registration", GetContentFrom(aliceChess));
-
-            Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
         }
 
         [Fact]
