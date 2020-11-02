@@ -1,5 +1,4 @@
 using System;
-using Newtonsoft.Json;
 using Xunit;
 using OpenChat.Api;
 
@@ -36,11 +35,6 @@ namespace OpenChat.Tests.Integration
 
             Assert.Equal(RestDispatcher.HTTP_BAD_REQUEST, response.Status);
             Assert.Equal("Username already in use.", response.Content);
-        }
-
-        private dynamic GetContentAsObject(DispatcherResponse response)
-        {
-            return JsonConvert.DeserializeObject<dynamic>(JsonConvert.SerializeObject(response.Content));
         }
     }
 }
