@@ -4,7 +4,7 @@ namespace OpenChat.Model
 {
     public class User
     {
-        public const string MSG_CANT_CREATE_USER_WITHEMPTY_NAME = "Can't create user with empty name.";
+        public const string MSG_CANT_CREATE_USER_WITH_EMPTY_NAME = "Can't create user with empty name.";
 
         public Guid Id { get; }
         public string Name { get; }
@@ -20,7 +20,7 @@ namespace OpenChat.Model
         private static void AssertNameNotEmpty(string name)
         {
             if (String.IsNullOrWhiteSpace(name))
-                throw new InvalidOperationException(MSG_CANT_CREATE_USER_WITHEMPTY_NAME);
+                throw new InvalidOperationException(MSG_CANT_CREATE_USER_WITH_EMPTY_NAME);
         }
 
         private User(string name, string about)
