@@ -6,6 +6,7 @@ namespace OpenChat.Api
 {
     public class RestDispatcher
     {
+        public const int HTTP_OK = 200;
         public const int HTTP_CREATED = 201;
         public const int HTTP_BAD_REQUEST = 400;
 
@@ -24,6 +25,21 @@ namespace OpenChat.Api
                 
                 var result = new UserResult(user);
                 return new DispatcherResponse(HTTP_CREATED, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return new DispatcherResponse(HTTP_BAD_REQUEST, ex.Message);
+            }
+        }
+
+        public DispatcherResponse Login(LoginRequest request)
+        {
+            try
+            {
+                var user = system.LoginUser(request.username, request.password);
+
+                var result = new UserResult(user);
+                return new DispatcherResponse(HTTP_OK, result);
             }
             catch (InvalidOperationException ex)
             {
@@ -60,7 +76,6 @@ namespace OpenChat.Api
         public string password;
         public string about;
     }
-
     public class UserResult
     {
         public UserResult(User user)
@@ -73,5 +88,16 @@ namespace OpenChat.Api
         public Guid userId;
         public string username;
         public string about;
+    }
+    public class LoginRequest
+    {
+        public LoginRequest(string userName, string password)
+        {
+            this.username = userName;
+            this.password = password;
+        }
+
+        public string username;
+        public string password;
     }
 }

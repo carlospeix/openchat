@@ -37,5 +37,19 @@ namespace OpenChat.Api.Controllers
 
             return result;
         }
+
+        [HttpPost("/openchat/login")]
+        public IActionResult Login([FromBody] LoginRequest request)
+        {
+            var response = dispatcher.Login(request);
+
+            var result =
+                new ObjectResult(response.Content)
+                {
+                    StatusCode = response.Status
+                };
+
+            return result;
+        }
     }
 }
