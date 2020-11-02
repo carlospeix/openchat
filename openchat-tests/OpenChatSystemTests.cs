@@ -27,7 +27,7 @@ namespace OpenChat.Tests
                 () => system.RegisterUser("Carlos", "")
             );
 
-            Assert.Equal(OpenChatSystem.MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD, exception.Message);
+            Assert.Equal(Credential.MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD, exception.Message);
         }
     }
 }

@@ -7,21 +7,20 @@ namespace OpenChat.Model
     public class OpenChatSystem
     {
         private readonly List<User> registeredUsers = new List<User>();
-        private readonly Dictionary<User, string> registeredCredentials = new Dictionary<User, string>();
+        private readonly Dictionary<User, Credential> registeredCredentials = new Dictionary<User, Credential>();
 
         public const string MSG_USER_NAME_ALREADY_IN_USE = "Username already in use.";
         public const string MSG_INVALID_CREDENTIALS = "Invalid credentials.";
-        public const string MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD = "Can't create credential with empty password.";
 
         public User RegisterUser(string userName, string password, string about = "")
         {
             AssertNewUserNameDoesntExist(userName);
-            AsserPasswordNotEmpty(password);
 
+            var credential = Credential.Create(password);
             var user = User.Create(userName, about);
 
             registeredUsers.Add(user);
-            registeredCredentials.Add(user, password);
+            registeredCredentials.Add(user, credential);
 
             return user;
         }
@@ -32,17 +31,11 @@ namespace OpenChat.Model
                 throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
         }
 
-        private static void AsserPasswordNotEmpty(string password)
-        {
-            if (String.IsNullOrWhiteSpace(password))
-                throw new InvalidOperationException(MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD);
-        }
-
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
         {
             var user = registeredUsers.Find(user => user.Name.Equals(userName));
 
-            if (user != null && registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.Equals(password)))
+            if (user != null && registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.WithPassword(password)))
                 return success(user);
             else
                 return fail(MSG_INVALID_CREDENTIALS);

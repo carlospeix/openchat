@@ -10,7 +10,7 @@ namespace OpenChat.Model
 
         public static Credential Create(string password)
         {
-            AsserPasswordNotEmpty(password);
+            AssertPasswordIsNotEmpty(password);
 
             return new Credential(password);
         }
@@ -24,7 +24,7 @@ namespace OpenChat.Model
             return password.Equals(potentialPassword);
         }
 
-        private static void AsserPasswordNotEmpty(string password)
+        private static void AssertPasswordIsNotEmpty(string password)
         {
             if (String.IsNullOrWhiteSpace(password))
                 throw new InvalidOperationException(MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD);
