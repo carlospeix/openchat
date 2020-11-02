@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OpenChat.Model;
 
 namespace OpenChat.Api
@@ -6,6 +7,7 @@ namespace OpenChat.Api
     public class RestDispatcher
     {
         public const int HTTP_CREATED = 201;
+        public const int HTTP_BAD_REQUEST = 400;
 
         private readonly OpenChatSystem system;
 
@@ -16,11 +18,17 @@ namespace OpenChat.Api
 
         public DispatcherResponse RegisterUser(RegistrationRequest request)
         {
-            var user = system.RegisterUser(request.username, request.password, request.about);
-
-            var result = new UserResult(user);
-
-            return new DispatcherResponse(HTTP_CREATED, result);
+            try
+            {
+                var user = system.RegisterUser(request.username, request.password, request.about);
+                
+                var result = new UserResult(user);
+                return new DispatcherResponse(HTTP_CREATED, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return new DispatcherResponse(HTTP_BAD_REQUEST, ex.Message);
+            }
         }
     }
 

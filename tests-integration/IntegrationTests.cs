@@ -14,27 +14,26 @@ namespace OpenChat.Tests.Integration
     // https://github.com/sandromancuso/cleancoders_openchat/blob/master/APIs.md
 
     [Collection("Integration Tests")]
-    public class IntegrationTests
+    public class IntegrationTests : IDisposable
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient client;
 
         public IntegrationTests(WebApplicationFactory<Startup> factory)
         {
-            _client = factory.CreateClient();
+            client = factory.CreateClient();
         }
 
         [Fact]
-        // POST - openchat/registration { "username" : "Alice", "password" : "alki324d", "about" : "I love playing the piano and travelling." }
-        // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing the piano and travelling." }
-        // Failure Status: BAD_REQUEST - 400 Response: "Username already in use."
+        // POST - openchat/registration { "username" : "Mark", "password" : "alki324d", "about" : "I love playing the piano and travelling." }
+        // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Mark", "about" : "I love playing the piano and travelling." }
         public async Task User_RegisterNewUserSuccess()
         {
             // Arrange
-            var alice = new { username = "Alice", password = "alki324d", about = "I love playing the piano and travelling." };
+            var alice = new { username = "Mark", password = "alki324d", about = "I love playing the piano and travelling." };
             var content = GetContentFrom(alice);
 
             // Act
-            var httpResponse = await _client.PostAsync("/openchat/registration", content);
+            var httpResponse = await client.PostAsync("/openchat/registration", content);
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
@@ -45,10 +44,26 @@ namespace OpenChat.Tests.Integration
         }
 
         [Fact]
+        // POST - openchat/registration { "username" : "Alice", "password" : "alki324d", "about" : "I love playing piano." }
+        // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing piano." }
+        // POST - openchat/registration { "username" : "Alice", "password" : "alki324d", "about" : "I love playing chess." }
+        // Failure Status: BAD_REQUEST - 400 Response: "Username already in use."
+        public async Task User_RegisterSameUserTwiceFails()
+        {
+            var alicePiano = new { username = "Alice", password = "password1", about = "I love playing piano." };
+            var aliceChess = new { username = "Alice", password = "password2", about = "I love playing chess." };
+            _ = await client.PostAsync("/openchat/registration", GetContentFrom(alicePiano));
+            
+            var httpResponse = await client.PostAsync("/openchat/registration", GetContentFrom(aliceChess));
+
+            Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
+        }
+
+        [Fact]
         public async Task GetRoot_ReturnsSuccessAndStatusUp()
         {
             // Act
-            var httpResponse = await _client.GetAsync("/openchat/");
+            var httpResponse = await client.GetAsync("/openchat/");
 
             // Assert
             httpResponse.EnsureSuccessStatusCode();
@@ -66,6 +81,10 @@ namespace OpenChat.Tests.Integration
         {
             return JsonConvert.DeserializeObject<dynamic>(
                 await httpResponse.Content.ReadAsStringAsync());
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

@@ -25,6 +25,19 @@ namespace OpenChat.Tests.Integration
             Assert.Equal("I like to sail in the open sea.", (string)user.about);
         }
 
+        [Fact]
+        public void UserCreationWithExistingNameFails()
+        {
+            var dispatcher = new RestDispatcher();
+            var request = new RegistrationRequest("Carlos", "Pass0rd!", "I like to sail in the open sea.");
+
+            _ = dispatcher.RegisterUser(request);
+            var response = dispatcher.RegisterUser(request);
+
+            Assert.Equal(RestDispatcher.HTTP_BAD_REQUEST, response.Status);
+            Assert.Equal("Username already in use.", response.Content);
+        }
+
         private dynamic GetContentAsObject(DispatcherResponse response)
         {
             return JsonConvert.DeserializeObject<dynamic>(JsonConvert.SerializeObject(response.Content));

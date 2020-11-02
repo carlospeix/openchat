@@ -9,10 +9,10 @@ namespace OpenChat.Api.Controllers
         private readonly ILogger<OpenChatController> logger;
         private readonly RestDispatcher dispatcher;
 
-        public OpenChatController(ILogger<OpenChatController> logger)
+        public OpenChatController(ILogger<OpenChatController> logger, RestDispatcher dispatcher)
         {
             this.logger = logger;
-            this.dispatcher = new RestDispatcher();
+            this.dispatcher = dispatcher;
         }
 
         [HttpGet("/openchat/")]
