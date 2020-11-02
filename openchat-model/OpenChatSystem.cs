@@ -38,14 +38,14 @@ namespace OpenChat.Model
                 throw new InvalidOperationException(MSG_CANT_CREATE_CREDENTIAL_WITH_EMPTY_PASSWORD);
         }
 
-        public void LoginUser(string userName, string password, Action<User> success, Action<string> fail)
+        public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
         {
             var user = registeredUsers.Find(user => user.Name.Equals(userName));
 
             if (user != null && registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.Equals(password)))
-                success(user);
+                return success(user);
             else
-                fail(MSG_INVALID_CREDENTIALS);
+                return fail(MSG_INVALID_CREDENTIALS);
         }
     }
 }
