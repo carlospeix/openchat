@@ -12,6 +12,7 @@ namespace OpenChat.Model
 
         public const string MSG_USER_NAME_ALREADY_IN_USE = "Username already in use.";
         public const string MSG_INVALID_CREDENTIALS = "Invalid credentials.";
+        public const string MSG_USER_DOESNT_EXIST = "User does not exit.";
 
         public OpenChatSystem() : this(Clock.System)
         {
@@ -37,7 +38,8 @@ namespace OpenChat.Model
 
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
         {
-            var user = registeredUsers.Find(user => user.Named(userName));
+            // TODO cambiar por linq
+            var user = registeredUsers.Where(user => user.Named(userName)).FirstOrDefault();
 
             if (user != null && CredentialMatches(user, password))
                 return success(user);
@@ -58,14 +60,15 @@ namespace OpenChat.Model
 
         public User UserIdentifiedBy(Guid userId)
         {
-            return registeredUsers.Find(user => user.IdentifiedBy(userId));
+            return registeredUsers.Where(user => user.IdentifiedBy(userId)).FirstOrDefault();
         }
 
-        public Post PublishPost(User user, string text)
+        public T PublishPost<T>(User publisher, string text, Func<Post, T> success, Func<string, T> fail)
         {
-            var post = user.Publish(text, clock.Now);
+            if (registeredUsers.Any(user => user.Equals(publisher)))
+                return success(publisher.Publish(text, clock.Now));
 
-            return post;
+            return fail(MSG_USER_DOESNT_EXIST);
         }
     }
 }
