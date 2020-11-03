@@ -113,6 +113,21 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(request.text, publishPostResult.text);
             Assert.Equal(clock.Now, publishPostResult.publicationTime);
         }
+        [Fact]
+        public void User_PublishPostFail()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+
+            var request = new PublishPostRequest(userId, "Hello everyone. I'm Alice.");
+
+            // Act
+            var result = controller.PublishPost(userId, request) as ObjectResult;
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
+            Assert.Equal("User does not exit.", result.Value);
+        }
 
         // Retrieve Posts (User timeline)
         // GET - openchat/users/{userId}/timeline [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "09:00:00" }]

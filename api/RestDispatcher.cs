@@ -45,6 +45,9 @@ namespace OpenChat.Api
         internal DispatcherResponse PublishPost(PublishPostRequest request)
         {
             var user = system.UserIdentifiedBy(request.userId);
+            if (user == null)
+                return new DispatcherResponse(HTTP_BAD_REQUEST, "User does not exit.");
+
             var post = system.PublishPost(user, request.text);
 
             var result = new PublishPostResult(post);
