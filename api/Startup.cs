@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenChat.Model;
 
 namespace OpenChat.Api
 {
@@ -19,7 +20,7 @@ namespace OpenChat.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddSingleton<RestDispatcher>()
+                .AddSingleton<OpenChatSystem>()
                 .AddControllers()
                 .AddNewtonsoftJson()
                 .AddJsonOptions(options =>
