@@ -39,10 +39,15 @@ namespace OpenChat.Model
         {
             var user = registeredUsers.Find(user => user.Named(userName));
 
-            if (user != null && registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.WithPassword(password)))
+            if (user != null && CredentialMatches(user, password))
                 return success(user);
             else
                 return fail(MSG_INVALID_CREDENTIALS);
+        }
+
+        private bool CredentialMatches(User user, string password)
+        {
+            return registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.WithPassword(password));
         }
 
         private void AssertNewUserNameDoesntExist(string userName)
