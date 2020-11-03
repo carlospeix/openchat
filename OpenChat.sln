@@ -7,9 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "openchat-api", "api\opencha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "openchat-tests-integration", "tests-integration\openchat-tests-integration.csproj", "{A6946470-A1B5-4EE9-A04A-4199C0A6F556}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openchat-tests", "openchat-tests\openchat-tests.csproj", "{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "openchat-tests", "openchat-tests\openchat-tests.csproj", "{03E2EC96-EFDA-4F7B-8B2F-FE187600FEE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openchat-model", "openchat-model\openchat-model.csproj", "{D7C5B69B-2E07-4F1B-9816-978742E5AE06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "openchat-model", "openchat-model\openchat-model.csproj", "{D7C5B69B-2E07-4F1B-9816-978742E5AE06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DF7349E-0019-4AFC-BF73-574D068A364E}"
+	ProjectSection(SolutionItems) = preProject
+		pendings.txt = pendings.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

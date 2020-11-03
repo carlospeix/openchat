@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using OpenChat.Model;
 
 namespace OpenChat.Api
@@ -12,9 +11,13 @@ namespace OpenChat.Api
 
         private readonly OpenChatSystem system;
 
-        public RestDispatcher()
+        public RestDispatcher() : this(Clock.Real)
         {
-            system = new OpenChatSystem();
+        }
+
+        public RestDispatcher(Clock clock)
+        {
+            system = new OpenChatSystem(clock);
         }
 
         public DispatcherResponse RegisterUser(RegistrationRequest request)
@@ -38,6 +41,15 @@ namespace OpenChat.Api
                 (user) => new DispatcherResponse(HTTP_OK, new UserResult(user)),
                 (message) => new DispatcherResponse(HTTP_BAD_REQUEST, message));
        }
+
+        internal DispatcherResponse PublishPost(PublishPostRequest request)
+        {
+            var user = system.UserIdentifiedBy(request.userId);
+            var post = system.PublishPost(user, request.text);
+
+            var result = new PublishPostResult(post);
+            return new DispatcherResponse(HTTP_CREATED, result);
+        }
     }
 
     public class DispatcherResponse
@@ -91,5 +103,31 @@ namespace OpenChat.Api
 
         public string username;
         public string password;
+    }
+    public class PublishPostRequest
+    {
+        public PublishPostRequest(Guid userId, string text)
+        {
+            this.userId = userId;
+            this.text = text;
+        }
+
+        public Guid userId;
+        public string text;
+    }
+    public class PublishPostResult
+    {
+        public PublishPostResult(Post post)
+        {
+            postId = post.Id;
+            userId = post.Publisher.Id;
+            text = post.Text;
+            publicationTime = post.PublicationTime;
+        }
+
+        public Guid postId;
+        public Guid userId;
+        public string text;
+        public DateTime publicationTime;
     }
 }

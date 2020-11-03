@@ -6,11 +6,21 @@ namespace OpenChat.Model
 {
     public class OpenChatSystem
     {
+        private readonly Clock clock;
         private readonly List<User> registeredUsers = new List<User>();
         private readonly Dictionary<User, Credential> registeredCredentials = new Dictionary<User, Credential>();
 
         public const string MSG_USER_NAME_ALREADY_IN_USE = "Username already in use.";
         public const string MSG_INVALID_CREDENTIALS = "Invalid credentials.";
+
+        public OpenChatSystem() : this(Clock.Real)
+        {
+        }
+
+        public OpenChatSystem(Clock clock)
+        {
+            this.clock = clock;
+        }
 
         public User RegisterUser(string userName, string password, string about = "")
         {
@@ -39,6 +49,18 @@ namespace OpenChat.Model
         {
             if (registeredUsers.Any(user => user.Name.Equals(userName)))
                 throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
+        }
+
+        public User UserIdentifiedBy(Guid userId)
+        {
+            return registeredUsers.Find(user => user.IdentifiedBy(userId));
+        }
+
+        public Post PublishPost(User user, string text)
+        {
+            var post = user.Publish(text, clock.Now);
+
+            return post;
         }
     }
 }

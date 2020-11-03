@@ -1,12 +1,13 @@
 ﻿using OpenChat.Model;
 using System;
+using System.Reflection;
 using Xunit;
 
 namespace OpenChat.Tests
 {
     public class UserTests
     {
-        private User carlos;
+        private readonly User carlos;
 
         public UserTests()
         {
@@ -36,5 +37,26 @@ namespace OpenChat.Tests
 
             Assert.Equal(User.MSG_CANT_CREATE_USER_WITH_EMPTY_NAME, exception.Message);
         }
+
+        [Fact]
+        public void UserCanPublishPosts()
+        {
+            var publicationTime = DateTime.Now;
+            var post = carlos.Publish("Nice post.", publicationTime);
+
+            Assert.NotEqual(Guid.Empty, post.Id);
+            Assert.Equal("Nice post.", post.Text);
+            Assert.Equal(publicationTime, post.PublicationTime);
+        }
+
+        [Fact]
+        public void UserIsThePublisherOfHerPost()
+        {
+            var publicationTime = DateTime.Now;
+            var post = carlos.Publish("Nice post.", publicationTime);
+
+            Assert.Equal(carlos, post.Publisher);
+        }
+
     }
 }

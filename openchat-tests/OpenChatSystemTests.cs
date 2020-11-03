@@ -11,6 +11,7 @@ namespace OpenChat.Tests
         [Fact]
         public void EnsurePasswordIsNotPresentInUserData()
         {
+            // TODO
             var system = new OpenChatSystem();
 
             var user = system.RegisterUser("Carlos", "Pass0rd!");
@@ -22,7 +23,9 @@ namespace OpenChat.Tests
         [Fact]
         public void CantRegisterUserWithEmptyPassword()
         {
+            // TODO
             var system = new OpenChatSystem();
+
             var exception = Assert.Throws<InvalidOperationException>(
                 () => system.RegisterUser("Carlos", "")
             );

@@ -29,5 +29,15 @@ namespace OpenChat.Model
             Name = name;
             About = about;
         }
+
+        internal bool IdentifiedBy(Guid userId)
+        {
+            return Id.Equals(userId);
+        }
+
+        public Post Publish(string text, DateTime publicationTime)
+        {
+            return Post.Create(this, text, publicationTime);
+        }
     }
 }

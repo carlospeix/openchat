@@ -3,18 +3,22 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using OpenChat.Api;
 using OpenChat.Api.Controllers;
+using OpenChat.Model;
 using Xunit;
 
 namespace OpenChat.Tests.Integration
 {
     public class ControllerTests
     {
+        private readonly Clock clock;
         private readonly OpenChatController controller;
         private readonly RegistrationRequest aliceRegistrationRequest;
 
         public ControllerTests()
         {
-            controller = new OpenChatController(new RestDispatcher());
+            clock = Clock.Fake;
+            controller = new OpenChatController(new RestDispatcher(clock));
+            
             aliceRegistrationRequest = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
         }
 
@@ -85,14 +89,33 @@ namespace OpenChat.Tests.Integration
         }
 
         // Create Post
-        // POST openchat/user//posts { "text" : "Hello everyone. I'm Alice." } Success Status CREATED - 201 { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "11:30:00" }
+        // POST openchat/users/{userId}/posts { "text" : "Hello everyone. I'm Alice." }
+        // Success Status CREATED - 201 { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "11:30:00" }
         // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exit."
+        [Fact]
+        public void User_PublishPostSuccess()
+        {
+            // Arrange
+            var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var userResult = (UserResult)registrationResult.Value;
+            var userId = userResult.userId;
 
+            var request = new PublishPostRequest(userId, "Hello everyone. I'm Alice.");
 
+            // Act
+            var result = controller.PublishPost(userId, request) as ObjectResult;
 
+            // Assert
+            Assert.Equal(HttpStatusCode.Created, (HttpStatusCode)result.StatusCode);
+            var publishPostResult = (PublishPostResult)result.Value;
+            Assert.NotEqual(Guid.Empty, publishPostResult.postId);
+            Assert.Equal(userId, publishPostResult.userId);
+            Assert.Equal(request.text, publishPostResult.text);
+            Assert.Equal(clock.Now, publishPostResult.publicationTime);
+        }
 
         // Retrieve Posts (User timeline)
-        // GET - openchat/user//timeline [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "09:00:00" }]
+        // GET - openchat/users/{userId}/timeline [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "09:00:00" }]
         // Success Status OK - 200
         // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exit."
 
@@ -100,7 +123,7 @@ namespace OpenChat.Tests.Integration
 
 
         // Follow User
-        // POST - openchat/follow { followerId: Alice ID, followeeId: Bob ID }
+        // POST - openchat/users/{userId}/follow { followerId: Alice ID, followeeId: Bob ID }
         // Success Status OK - 201
         // Failure Status: BAD_REQUEST - 400 (in case one of the users doesn't exist) Response: "At least one of the users does not exit."
 
@@ -108,7 +131,7 @@ namespace OpenChat.Tests.Integration
 
 
         // Retrieve Wall
-        // GET - openchat/user//wall [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Planning to eat something with Charlie. Wanna join us?", "date" : "10/01/2018", "time" : "13:25:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "What's up everyone?", "date" : "10/01/2018", "time" : "11:20:50" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "CHARLIE_IDxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hi all. Charlie here.", "date" : "10/01/2018", "time" : "09:15:34" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "09:00:00" }]
+        // GET - openchat/users/{userId}/wall [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Planning to eat something with Charlie. Wanna join us?", "date" : "10/01/2018", "time" : "13:25:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "What's up everyone?", "date" : "10/01/2018", "time" : "11:20:50" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "CHARLIE_IDxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hi all. Charlie here.", "date" : "10/01/2018", "time" : "09:15:34" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "09:00:00" }]
         // Success Status OK - 200
         // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exist."
 
@@ -123,7 +146,7 @@ namespace OpenChat.Tests.Integration
 
 
         // Retrieve all users followed by another user (followees)
-        // GET - openchat/user/:userId/followees [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
+        // GET - openchat/users/{userId}/followees [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
         // Success Status OK - 200
     }
 }

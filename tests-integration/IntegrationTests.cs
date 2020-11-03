@@ -43,6 +43,30 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(alice.about, (string)response.about);
         }
 
+        // Create Post
+        // POST openchat/users/{userId}/posts { "text" : "Hello everyone. I'm Alice." }
+        // Success Status CREATED - 201 { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "11:30:00" }
+        [Fact]
+        public async Task Post_PublishSuccess()
+        {
+            // Arrange
+            var alice = new { username = "Carlos", password = "alki324d", about = "I love playing the piano and travelling." };
+            var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(alice));
+            dynamic registrationResponse = await GetResponseFrom(httpRegistrationResponse);
+            var userId = Guid.Parse((string)registrationResponse.userId);
+
+            // Act
+            var post = new { text = "Hello everyone. I'm Carlos." };
+            var httpPublishResponse = await client.PostAsync($"/openchat/users/{userId}/posts", GetContentFrom(post));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);
+            dynamic response = await GetResponseFrom(httpPublishResponse);
+            Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.postId));
+            Assert.Equal(userId, Guid.Parse((string)response.userId));
+            Assert.Equal(post.text, (string)response.text);
+        }
+
         [Fact]
         public async Task GetRoot_ReturnsSuccessAndStatusUp()
         {
