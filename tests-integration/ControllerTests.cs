@@ -27,7 +27,7 @@ namespace OpenChat.Tests.Integration
         // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing the piano and travelling." }
         // Failure Status: BAD_REQUEST - 400 Response: "Username already in use."
         [Fact]
-        public void User_RegisterNewUserSuccess()
+        public void User_RegisterNewUserSucceeds()
         {
             // Act
             var result = controller.Registration(aliceRegistrationRequest) as ObjectResult;
@@ -40,7 +40,7 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(aliceRegistrationRequest.about, userResult.about);
         }
         [Fact]
-        public void User_RegisterSameUserTwiceFailure()
+        public void User_RegisterSameUserTwiceFails()
         {
             // Arrange
             _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
@@ -58,7 +58,7 @@ namespace OpenChat.Tests.Integration
         // Success Status OK - 200 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing the piano and travelling." }
         // Failure Status: BAD_REQUEST - 400 Response: "Invalid credentials."
         [Fact]
-        public void User_LoginSuccess()
+        public void User_LoginSucceeds()
         {
             // Arrange
             _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
@@ -93,7 +93,7 @@ namespace OpenChat.Tests.Integration
         // Success Status CREATED - 201 { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "11:30:00" }
         // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exit."
         [Fact]
-        public void User_PublishPostSuccess()
+        public void User_PublishPostSucceeds()
         {
             // Arrange
             var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
@@ -114,7 +114,7 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(clock.Now, publishPostResult.publicationTime);
         }
         [Fact]
-        public void User_PublishPostFail()
+        public void User_PublishPostFails()
         {
             // Arrange
             var userId = Guid.NewGuid();
