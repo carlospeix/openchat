@@ -23,9 +23,9 @@ namespace OpenChat.Tests
         [Fact]
         public void NewUserHasProperNameAboutAndId()
         {
-            Assert.NotEqual(Guid.Empty, carlos.Id);
-            Assert.Equal("Carlos", carlos.Name);
-            Assert.Equal("About Carlos", carlos.About);
+            Assert.False(carlos.IdentifiedBy(Guid.Empty));
+            Assert.True(carlos.Named("Carlos"));
+            Assert.True(carlos.DescribedBy("About Carlos"));
         }
 
         [Fact]

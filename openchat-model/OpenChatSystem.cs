@@ -13,7 +13,7 @@ namespace OpenChat.Model
         public const string MSG_USER_NAME_ALREADY_IN_USE = "Username already in use.";
         public const string MSG_INVALID_CREDENTIALS = "Invalid credentials.";
 
-        public OpenChatSystem() : this(Clock.Real)
+        public OpenChatSystem() : this(Clock.System)
         {
         }
 
@@ -37,7 +37,7 @@ namespace OpenChat.Model
 
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
         {
-            var user = registeredUsers.Find(user => user.Name.Equals(userName));
+            var user = registeredUsers.Find(user => user.Named(userName));
 
             if (user != null && registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.WithPassword(password)))
                 return success(user);
@@ -47,7 +47,7 @@ namespace OpenChat.Model
 
         private void AssertNewUserNameDoesntExist(string userName)
         {
-            if (registeredUsers.Any(user => user.Name.Equals(userName)))
+            if (registeredUsers.Any(user => user.Named(userName)))
                 throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
         }
 

@@ -11,7 +11,7 @@ namespace OpenChat.Api
 
         private readonly OpenChatSystem system;
 
-        public RestDispatcher() : this(Clock.Real)
+        public RestDispatcher() : this(Clock.System)
         {
         }
 

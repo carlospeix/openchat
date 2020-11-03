@@ -9,7 +9,7 @@ namespace OpenChat.Tests
         [Fact]
         public void ClockRuns()
         {
-            var clock = Clock.Real;
+            var clock = Clock.System;
 
             var now = clock.Now;
             Thread.Sleep(5);

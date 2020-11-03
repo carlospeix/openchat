@@ -4,7 +4,7 @@ namespace OpenChat.Model
 {
     public class Clock
     {
-        public static Clock Real => new Clock();
+        public static Clock System => new Clock();
         public static Clock Fake => new FakeClock();
 
         protected Clock()
