@@ -10,7 +10,7 @@ namespace OpenChat.Model
         public string Name { get; }
         public string About { get; }
 
-        public static User Create(string name, string about)
+        public static User Create(string name, string about = "")
         {
             AssertNameNotEmpty(name);
 

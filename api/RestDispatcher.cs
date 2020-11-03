@@ -22,17 +22,9 @@ namespace OpenChat.Api
 
         public DispatcherResponse RegisterUser(RegistrationRequest request)
         {
-            try
-            {
-                var user = system.RegisterUser(request.username, request.password, request.about);
-                
-                var result = new UserResult(user);
-                return new DispatcherResponse(HTTP_CREATED, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return new DispatcherResponse(HTTP_BAD_REQUEST, ex.Message);
-            }
+            return system.RegisterUser(request.username, request.password, request.about,
+                (user) => new DispatcherResponse(HTTP_CREATED, new UserResult(user)),
+                (message) => new DispatcherResponse(HTTP_BAD_REQUEST, message));
         }
 
         public DispatcherResponse Login(LoginRequest request)

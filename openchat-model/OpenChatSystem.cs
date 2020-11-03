@@ -23,17 +23,24 @@ namespace OpenChat.Model
             this.clock = clock;
         }
 
-        public User RegisterUser(string userName, string password, string about = "")
+        public T RegisterUser<T>(string userName, string password, string about, Func<User, T> success, Func<string, T> fail)
         {
-            AssertNewUserNameDoesntExist(userName);
+            try
+            {
+                AssertNewUserNameDoesNotExist(userName);
 
-            var credential = Credential.Create(password);
-            var user = User.Create(userName, about);
+                var credential = Credential.Create(password);
+                var user = User.Create(userName, about);
 
-            registeredUsers.Add(user);
-            registeredCredentials.Add(user, credential);
+                registeredUsers.Add(user);
+                registeredCredentials.Add(user, credential);
 
-            return user;
+                return success(user);
+            }
+            catch (Exception e)
+            {
+                return fail(e.Message);
+            }
         }
 
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
@@ -52,7 +59,7 @@ namespace OpenChat.Model
             return registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.WithPassword(password));
         }
 
-        private void AssertNewUserNameDoesntExist(string userName)
+        private void AssertNewUserNameDoesNotExist(string userName)
         {
             if (registeredUsers.Any(user => user.Named(userName)))
                 throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
