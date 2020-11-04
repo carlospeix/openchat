@@ -55,6 +55,11 @@ namespace OpenChat.Model
                 return fail(MSG_INVALID_CREDENTIALS);
         }
 
+        public int RegisteredUsersCount()
+        {
+            return registeredUsers.Count();
+        }
+
         private bool CredentialMatches(User user, string password)
         {
             return registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.WithPassword(password));
@@ -91,7 +96,9 @@ namespace OpenChat.Model
         {
             if (registeredUsers.Any(user => user.Equals(follower))
                 && registeredUsers.Any(user => user.Equals(followee)))
-                return success(follower);
+            {
+                return success(follower.Follows(followee));
+            }
 
             return fail(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);
         }

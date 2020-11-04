@@ -13,6 +13,7 @@ namespace OpenChat.Model
         public string About { get; }
         
         private readonly IList<Post> publishedPosts;
+        private readonly IList<User> followees;
 
         public static User Create(string name, string about = "")
         {
@@ -34,6 +35,7 @@ namespace OpenChat.Model
             About = about;
 
             publishedPosts = new List<Post>();
+            followees = new List<User>();
         }
 
         public Post Publish(string text, DateTime publicationTime)
@@ -65,6 +67,18 @@ namespace OpenChat.Model
                 .OrderByDescending(post => post.PublicationTime)
                 .ToList()
                 .AsReadOnly();
+        }
+
+        public int FolloweesCount()
+        {
+            return followees.Count();
+        }
+
+        internal User Follows(User followee)
+        {
+            if (!followees.Contains(followee))
+                followees.Add(followee);
+            return this;
         }
     }
 }

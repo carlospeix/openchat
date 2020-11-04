@@ -57,6 +57,57 @@ namespace OpenChat.Tests
                 (message) => message);
 
             Assert.Equal(OpenChatSystem.MSG_USER_NAME_ALREADY_IN_USE, returnedMessage);
+            Assert.Equal(1, system.RegisteredUsersCount());
         }
+
+        [Fact]
+        public void CanFollowUser()
+        {
+            var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
+                (user) => user,
+                (message) => default);
+            var martaUser = system.RegisterUser("Marta", "irrelevant", "",
+                (user) => user,
+                (message) => default);
+
+            _ = system.Follow(aliceUser, martaUser,
+                (user) => user, (message) => default);
+
+            Assert.Equal(1, aliceUser.FolloweesCount());
+        }
+
+        [Fact]
+        public void CantFollowNonExistenUser()
+        {
+            var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
+                (user) => user,
+                (message) => default);
+            var martaUser = system.RegisterUser("Marta", "irrelevant", "",
+                (user) => user,
+                (message) => default);
+            var nonExistingUser = User.Create("No existis");
+
+            _ = system.Follow(aliceUser, martaUser, (user) => user, (message) => default);
+            _ = system.Follow(aliceUser, nonExistingUser, (user) => user, (message) => default);
+
+            Assert.Equal(1, aliceUser.FolloweesCount());
+        }
+
+        [Fact]
+        public void FollowingTheSameUserTwiceDoesNotFail()
+        {
+            var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
+                (user) => user,
+                (message) => default);
+            var martaUser = system.RegisterUser("Marta", "irrelevant", "",
+                (user) => user,
+                (message) => default);
+
+            _ = system.Follow(aliceUser, martaUser, (user) => user, (message) => default);
+            _ = system.Follow(aliceUser, martaUser, (user) => user, (message) => default);
+
+            Assert.Equal(1, aliceUser.FolloweesCount());
+        }
+
     }
 }
