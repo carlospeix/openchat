@@ -92,6 +92,11 @@ namespace OpenChat.Model
             return fail(MSG_USER_DOES_NOT_EXIST);
         }
 
+        public T WallFor<T>(User user, Func<IList<Post>, T> success)
+        {
+            return success(user.Wall());
+        }
+
         public T Follow<T>(User follower, User followee, Func<User, T> success, Func<string, T> fail)
         {
             if (registeredUsers.Any(user => user.Equals(follower))

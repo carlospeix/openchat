@@ -69,6 +69,8 @@ namespace OpenChat.Model
                 .AsReadOnly();
         }
 
+        internal IList<Post> Wall() => Timeline();
+
         public int FolloweesCount()
         {
             return followees.Count();

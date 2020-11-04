@@ -50,7 +50,7 @@ namespace OpenChat.Api.Controllers
                 (message) => new BadRequestObjectResult(message));
         }
 
-        [HttpPost("/openchat/users/{userId}/timeline")]
+        [HttpGet("/openchat/users/{userId}/timeline")]
         public ObjectResult UserTimeline([FromRoute] Guid userId)
         {
             return system.TimelineFor<ObjectResult>(system.UserIdentifiedBy(userId),
@@ -67,6 +67,14 @@ namespace OpenChat.Api.Controllers
                 (follower) => new CreatedResult($"/openchat/users/{follower.Id}/followees", null),
                 (message) => new BadRequestObjectResult(message));
         }
+
+        [HttpGet("/openchat/users/{userId}/wall")]
+        public ObjectResult UserWall([FromRoute] Guid userId)
+        {
+            return system.WallFor<ObjectResult>(system.UserIdentifiedBy(userId),
+                (wall) => new OkObjectResult(wall.Select(post => new PostResult(post)).ToList()));
+        }
+
     }
     public class RegistrationRequest
     {

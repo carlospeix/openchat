@@ -34,7 +34,7 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             httpResponse.EnsureSuccessStatusCode();
-            dynamic response = await GetResponseFrom(httpResponse);
+            dynamic response = await GetResponseFromAsync(httpResponse);
             Assert.Equal("Up", (string)response.status);
         }
 
@@ -52,7 +52,7 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
-            dynamic response = await GetResponseFrom(httpResponse);
+            dynamic response = await GetResponseFromAsync(httpResponse);
             Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.userId));
             Assert.Equal(alice.username, (string)response.username);
             Assert.Equal(alice.about, (string)response.about);
@@ -67,7 +67,7 @@ namespace OpenChat.Tests.Integration
             // Arrange
             var carlos = new { username = "Carlos", password = "alki324d", about = "I love playing the piano and travelling." };
             var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(carlos));
-            dynamic registrationResponse = await GetResponseFrom(httpRegistrationResponse);
+            dynamic registrationResponse = await GetResponseFromAsync(httpRegistrationResponse);
             var userId = Guid.Parse((string)registrationResponse.userId);
 
             // Act
@@ -76,10 +76,31 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);
-            dynamic response = await GetResponseFrom(httpPublishResponse);
+            dynamic response = await GetResponseFromAsync(httpPublishResponse);
             Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.postId));
             Assert.Equal(userId, Guid.Parse((string)response.userId));
             Assert.Equal(post.text, (string)response.text);
+        }
+
+        // Retrieve Posts (User timeline)
+        // GET - openchat/users/{userId}/timeline [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "09:00:00" }]
+        // Success Status OK - 200
+        // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exit."
+        [Fact]
+        public async Task Post_TimelineSuccess()
+        {
+            // Arrange
+            var markId = await RegisterUserAsync("Mark", "irrelevant", "");
+            var httpPublishResponse = await client.PostAsync($"/openchat/users/{markId}/posts",
+                GetContentFrom(new { text = "Anything interesting happening tonight?" }));
+
+            // Act
+            var httpTimelineResponse = await client.GetAsync($"/openchat/users/{markId}/timeline");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpTimelineResponse.StatusCode);
+            dynamic response = await GetResponseFromAsync(httpTimelineResponse);
+            Assert.Equal(1, response.Count);
         }
 
         // Follow User
@@ -89,12 +110,12 @@ namespace OpenChat.Tests.Integration
         public async Task Follow_ConnieFollowsMartaSuccess()
         {
             // Arrange
-            dynamic connieRegistration = await GetResponseFrom(
+            dynamic connieRegistration = await GetResponseFromAsync(
                 await client.PostAsync("/openchat/registration", GetContentFrom(
                     new { username = "Connie", password = "alki324d", about = "" })));
             var followerId = Guid.Parse((string)connieRegistration.userId);
 
-            dynamic martaRegistration = await GetResponseFrom(
+            dynamic martaRegistration = await GetResponseFromAsync(
                 await client.PostAsync("/openchat/registration", GetContentFrom(
                     new { username = "Marta", password = "alki324d", about = "" })));
             var followeeId = Guid.Parse((string)martaRegistration.userId);
@@ -107,13 +128,47 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);
         }
 
+        // Retrieve Wall
+        // GET - openchat/users/{userId}/wall [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Planning to eat something with Charlie. Wanna join us?", "date" : "10/01/2018", "time" : "13:25:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "What's up everyone?", "date" : "10/01/2018", "time" : "11:20:50" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "CHARLIE_IDxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hi all. Charlie here.", "date" : "10/01/2018", "time" : "09:15:34" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "09:00:00" }]
+        // Success Status OK - 200
+        // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exist."
+        [Fact]
+        public async Task Post_AliceWallSuccess()
+        {
+            // Arrange
+            var aliceId = await RegisterUserAsync("Alice1", "irrelevant", "");
+            _ = await client.PostAsync($"/openchat/users/{aliceId}/posts",
+                GetContentFrom(new { text = "Anything interesting happening tonight?" }));
+
+            // Act
+            var httpWallResponse = await client.GetAsync($"/openchat/users/{aliceId}/wall");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpWallResponse.StatusCode);
+            dynamic response = await GetResponseFromAsync(httpWallResponse);
+            Assert.Equal(1, response.Count);
+        }
+
+        private async Task<Guid> RegisterUserAsync(string userName, string password, string about)
+        {
+            var user = new { username = userName, password = password, about = about };
+            var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(user));
+            dynamic registrationResponse = await GetResponseFromAsync(httpRegistrationResponse);
+            return Guid.Parse((string)registrationResponse.userId);
+            
+            //dynamic registration = await GetResponseFrom(
+            //    await client.PostAsync("/openchat/registration", GetContentFrom(
+            //        new { username = userName, password = password, about = about })));
+            //return Guid.Parse((string)registration.userId);
+        }
+
         private HttpContent GetContentFrom(object content)
         {
             return new StringContent(
                 JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
         }
 
-        private async Task<dynamic> GetResponseFrom(HttpResponseMessage httpResponse)
+        private async Task<dynamic> GetResponseFromAsync(HttpResponseMessage httpResponse)
         {
             return JsonConvert.DeserializeObject<dynamic>(
                 await httpResponse.Content.ReadAsStringAsync());
