@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using OpenChat.Api;
 using OpenChat.Api.Controllers;
 using OpenChat.Model;
 using Xunit;
@@ -34,7 +33,7 @@ namespace OpenChat.Tests.Integration
         public void User_RegisterNewUserSucceeds()
         {
             // Act
-            var result = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var result = controller.Registration(aliceRegistrationRequest);
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, (HttpStatusCode)result.StatusCode);
@@ -47,10 +46,10 @@ namespace OpenChat.Tests.Integration
         public void User_RegisterSameUserTwiceFails()
         {
             // Arrange
-            _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            _ = controller.Registration(aliceRegistrationRequest);
 
             // Act
-            var result = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var result = controller.Registration(aliceRegistrationRequest);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
@@ -65,11 +64,11 @@ namespace OpenChat.Tests.Integration
         public void User_LoginSucceeds()
         {
             // Arrange
-            _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            _ = controller.Registration(aliceRegistrationRequest);
             var login = new LoginRequest(aliceRegistrationRequest.username, aliceRegistrationRequest.password);
 
             // Act
-            var result = controller.Login(login) as ObjectResult;
+            var result = controller.Login(login);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
@@ -81,11 +80,11 @@ namespace OpenChat.Tests.Integration
         public void User_LoginFailure()
         {
             // Arrange
-            _ = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            _ = controller.Registration(aliceRegistrationRequest);
             var login = new LoginRequest(aliceRegistrationRequest.username, aliceRegistrationRequest.password + "-X");
 
             // Act
-            var result = controller.Login(login) as ObjectResult;
+            var result = controller.Login(login);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
@@ -100,14 +99,14 @@ namespace OpenChat.Tests.Integration
         public void Posts_PublishSucceeds()
         {
             // Arrange
-            var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var registrationResult = controller.Registration(aliceRegistrationRequest);
             var userResult = (UserResult)registrationResult.Value;
             var userId = userResult.userId;
 
             var request = new PublishPostRequest("Hello everyone. I'm Alice.");
 
             // Act
-            var result = controller.PublishPost(userId, request) as ObjectResult;
+            var result = controller.PublishPost(userId, request);
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, (HttpStatusCode)result.StatusCode);
@@ -126,7 +125,7 @@ namespace OpenChat.Tests.Integration
             var request = new PublishPostRequest("Hello everyone. I'm Alice.");
 
             // Act
-            var result = controller.PublishPost(userId, request) as ObjectResult;
+            var result = controller.PublishPost(userId, request);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
@@ -141,17 +140,19 @@ namespace OpenChat.Tests.Integration
         public void Posts_TimelineSucceeds()
         {
             // Arrange
-            var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var registrationResult = controller.Registration(aliceRegistrationRequest);
             var userResult = (UserResult)registrationResult.Value;
             var userId = userResult.userId;
             var date1stPost = new DateTime(2018, 10, 1, 9, 0, 0);
             var date2ndPost = new DateTime(2018, 10, 1, 11, 30, 0);
 
             clock.Set(date1stPost);
-            _ = controller.PublishPost(userId, new PublishPostRequest("Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
+            _ = controller.PublishPost(userId, 
+                new PublishPostRequest("Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
             
             clock.Set(date2ndPost);
-            _ = controller.PublishPost(userId, new PublishPostRequest("Anything interesting happening tonight?")); // "10/01/2018 11:30:00"
+            _ = controller.PublishPost(userId, 
+                new PublishPostRequest("Anything interesting happening tonight?")); // "10/01/2018 11:30:00"
 
             // Act
             var result = controller.UserTimeline(userId);
@@ -175,13 +176,14 @@ namespace OpenChat.Tests.Integration
         public void Posts_TimelineFails()
         {
             // Arrange
-            var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var registrationResult = controller.Registration(aliceRegistrationRequest);
             var userResult = (UserResult)registrationResult.Value;
             var userId = userResult.userId;
             var date1stPost = new DateTime(2018, 10, 1, 9, 0, 0);
 
             clock.Set(date1stPost);
-            _ = controller.PublishPost(userId, new PublishPostRequest("Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
+            _ = controller.PublishPost(userId,
+                new PublishPostRequest("Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
 
             // Act
             var result = controller.UserTimeline(Guid.NewGuid());
@@ -205,7 +207,8 @@ namespace OpenChat.Tests.Integration
             var nonRegisteredUserId = Guid.NewGuid();
 
             // Act
-            var result = controller.Follow(followerId, new FollowRequest(nonRegisteredUserId)) as BadRequestObjectResult;
+            var result = controller.Follow(followerId, 
+                new FollowRequest(nonRegisteredUserId)) as BadRequestObjectResult;
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);

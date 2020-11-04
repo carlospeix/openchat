@@ -26,7 +26,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void User_CantRegisterUserWithEmptyName()
+        public void User_CanNotRegisterUserWithEmptyName()
         {
             var returnedMessage = system.RegisterUser("", "password", "",
                 (user) => default,
@@ -36,7 +36,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void User_CantRegisterUserWithEmptyPassword()
+        public void User_CanNotRegisterUserWithEmptyPassword()
         {
             var returnedMessage = system.RegisterUser("irrelevant", "", "",
                 (user) => default,
@@ -46,7 +46,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void User_CantRegisterSameUserTwice()
+        public void User_CanNotRegisterSameUserTwice()
         {
             _ = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => default,

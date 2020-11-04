@@ -27,6 +27,18 @@ namespace OpenChat.Tests.Integration
         }
 
         [Fact]
+        public async Task GetRoot_ReturnsSuccessAndStatusUp()
+        {
+            // Act
+            var httpResponse = await client.GetAsync("/openchat/");
+
+            // Assert
+            httpResponse.EnsureSuccessStatusCode();
+            dynamic response = await GetResponseFrom(httpResponse);
+            Assert.Equal("Up", (string)response.status);
+        }
+
+        [Fact]
         // POST - openchat/registration { "username" : "Alice", "password" : "alki324d", "about" : "I love playing the piano and travelling." }
         // Success Status CREATED - 201 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Mark", "about" : "I love playing the piano and travelling." }
         public async Task User_RegisterNewUserSuccess()
@@ -53,8 +65,8 @@ namespace OpenChat.Tests.Integration
         public async Task Post_PublishSuccess()
         {
             // Arrange
-            var alice = new { username = "Carlos", password = "alki324d", about = "I love playing the piano and travelling." };
-            var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(alice));
+            var carlos = new { username = "Carlos", password = "alki324d", about = "I love playing the piano and travelling." };
+            var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(carlos));
             dynamic registrationResponse = await GetResponseFrom(httpRegistrationResponse);
             var userId = Guid.Parse((string)registrationResponse.userId);
 
@@ -93,18 +105,6 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);
-        }
-
-        [Fact]
-        public async Task GetRoot_ReturnsSuccessAndStatusUp()
-        {
-            // Act
-            var httpResponse = await client.GetAsync("/openchat/");
-
-            // Assert
-            httpResponse.EnsureSuccessStatusCode();
-            dynamic response = await GetResponseFrom(httpResponse);
-            Assert.Equal("Up", (string)response.status);
         }
 
         private HttpContent GetContentFrom(object content)
