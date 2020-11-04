@@ -3,5 +3,5 @@ Refactorings
 X Tell, dont ask for the user name
 X Revisar objeto PublishPostRequest
 X Cambiar nombre a clase PublishPostResul
+X Escribir los tests de Clock y FakeClock
 - Mejorar implementación de método LoginUser<T> en la clase OpenChatSystem
-- Escribir los tests de Clock y FakeClock

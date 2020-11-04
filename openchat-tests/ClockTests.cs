@@ -1,4 +1,5 @@
 ﻿using OpenChat.Model;
+using System;
 using System.Threading;
 using Xunit;
 
@@ -26,6 +27,29 @@ namespace OpenChat.Tests
             Thread.Sleep(5);
 
             Assert.Equal(now, clock.Now);
+        }
+
+        [Fact]
+        public void CanSetTheClockFromOutside()
+        {
+            var clock = Clock.Fake;
+            var now = DateTime.Now;
+
+            clock.Set(now);
+            Thread.Sleep(5);
+            Assert.Equal(now, clock.Now);
+
+            clock.Set(now.AddHours(2));
+            Thread.Sleep(5);
+            Assert.Equal(now.AddHours(2), clock.Now);
+        }
+
+        [Fact]
+        public void ThrowsIfUsingTheSetMethodInSystemClock()
+        {
+            var clock = Clock.System;
+
+            _ = Assert.Throws<InvalidOperationException>(() => clock.Set(DateTime.Now));
         }
     }
 }
