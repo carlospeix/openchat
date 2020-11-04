@@ -88,7 +88,7 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
-            Assert.Equal("Invalid credentials.", result.Value);
+            Assert.Equal(OpenChatSystem.MSG_INVALID_CREDENTIALS, result.Value);
         }
 
         // Create Post
@@ -129,7 +129,7 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
-            Assert.Equal("User does not exist.", result.Value);
+            Assert.Equal(OpenChatSystem.MSG_USER_DOES_NOT_EXIST, result.Value);
         }
 
         // Retrieve Posts (User timeline)
@@ -190,7 +190,7 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
-            Assert.Equal("User does not exist.", result.Value);
+            Assert.Equal(OpenChatSystem.MSG_USER_DOES_NOT_EXIST, result.Value);
         }
 
         // Follow User
@@ -212,7 +212,7 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
-            Assert.Equal("At least one of the users does not exit.", result.Value);
+            Assert.Equal(OpenChatSystem.MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST, result.Value);
         }
 
         // Retrieve Wall

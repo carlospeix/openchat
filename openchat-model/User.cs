@@ -46,17 +46,24 @@ namespace OpenChat.Model
             return post;
         }
 
-        public bool IdentifiedBy(Guid userId)
+        internal User Follows(User followee)
+        {
+            if (!followees.Contains(followee))
+                followees.Add(followee);
+            return this;
+        }
+
+        public bool IsIdentifiedBy(Guid userId)
         {
             return Id.Equals(userId);
         }
 
-        public bool Named(string userName)
+        public bool IsNamed(string userName)
         {
             return Name.Equals(userName);
         }
 
-        public bool DescribedBy(string about)
+        public bool IsDescribedBy(string about)
         {
             return About.Equals(about);
         }
@@ -74,13 +81,6 @@ namespace OpenChat.Model
         public int FolloweesCount()
         {
             return followees.Count();
-        }
-
-        internal User Follows(User followee)
-        {
-            if (!followees.Contains(followee))
-                followees.Add(followee);
-            return this;
         }
     }
 }

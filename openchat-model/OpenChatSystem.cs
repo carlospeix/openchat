@@ -47,7 +47,7 @@ namespace OpenChat.Model
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
         {
             // TODO cambiar por linq
-            var user = registeredUsers.Where(user => user.Named(userName)).FirstOrDefault();
+            var user = registeredUsers.Where(user => user.IsNamed(userName)).FirstOrDefault();
 
             if (user != null && CredentialMatches(user, password))
                 return success(user);
@@ -67,13 +67,13 @@ namespace OpenChat.Model
 
         private void AssertNewUserNameDoesNotExist(string userName)
         {
-            if (registeredUsers.Any(user => user.Named(userName)))
+            if (registeredUsers.Any(user => user.IsNamed(userName)))
                 throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
         }
 
         public User UserIdentifiedBy(Guid userId)
         {
-            return registeredUsers.Where(user => user.IdentifiedBy(userId)).FirstOrDefault();
+            return registeredUsers.Where(user => user.IsIdentifiedBy(userId)).FirstOrDefault();
         }
 
         public T PublishPost<T>(User publisher, string text, Func<Post, T> success, Func<string, T> fail)
