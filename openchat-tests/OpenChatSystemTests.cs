@@ -15,7 +15,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void EnsurePasswordIsNotPresentInUserData()
+        public void User_EnsurePasswordIsNotPresentInUserData()
         {
             var user = system.RegisterUser("irrelevant", "Pass0rd!", "",
                 (user) => user,
@@ -26,7 +26,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void CantRegisterUserWithEmptyName()
+        public void User_CantRegisterUserWithEmptyName()
         {
             var returnedMessage = system.RegisterUser("", "password", "",
                 (user) => default,
@@ -36,7 +36,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void CantRegisterUserWithEmptyPassword()
+        public void User_CantRegisterUserWithEmptyPassword()
         {
             var returnedMessage = system.RegisterUser("irrelevant", "", "",
                 (user) => default,
@@ -46,7 +46,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void CantRegisterSameUserTwice()
+        public void User_CantRegisterSameUserTwice()
         {
             _ = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => default,
@@ -61,7 +61,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void CanFollowUser()
+        public void Follow_CanFollowUser()
         {
             var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => user,
@@ -77,7 +77,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void CantFollowNonExistenUser()
+        public void Follow_CanNotFollowNonExistenUser()
         {
             var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => user,
@@ -94,7 +94,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void FollowingTheSameUserTwiceDoesNotFail()
+        public void Follow_FollowingTheSameUserTwiceDoesNotFail()
         {
             var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => user,
@@ -108,6 +108,5 @@ namespace OpenChat.Tests
 
             Assert.Equal(1, aliceUser.FolloweesCount());
         }
-
     }
 }
