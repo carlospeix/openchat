@@ -1,5 +1,6 @@
 
 Refactorings
 X Tell, dont ask for the user name
-- Revisar objeto PublishPostRequest
-- Cambiar nombre a clase PublishPostResult
+X Revisar objeto PublishPostRequest
+X Cambiar nombre a clase PublishPostResul
+- Mejorar implementación de método LoginUser<T> en la clase OpenChatSystem

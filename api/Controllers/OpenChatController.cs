@@ -45,9 +45,8 @@ namespace OpenChat.Api.Controllers
         [HttpPost("/openchat/users/{userId}/posts")]
         public ObjectResult PublishPost([FromRoute] Guid userId, [FromBody] PublishPostRequest request)
         {
-            // TODO: Revisar estos parámetros
             return system.PublishPost<ObjectResult>(system.UserIdentifiedBy(userId), request.text,
-                (post) => new CreatedResult($"/openchat/posts/{post.Id}", new PublishPostResult(post)),
+                (post) => new CreatedResult($"/openchat/posts/{post.Id}", new PostResult(post)),
                 (message) => new BadRequestObjectResult(message));
         }
 
@@ -55,7 +54,7 @@ namespace OpenChat.Api.Controllers
         public ObjectResult UserTimeline(Guid userId)
         {
             return system.TimelineFor<ObjectResult>(system.UserIdentifiedBy(userId),
-                (timeline) => new OkObjectResult(timeline.Select(post => new PublishPostResult(post)).ToList()),
+                (timeline) => new OkObjectResult(timeline.Select(post => new PostResult(post)).ToList()),
                 (message) => new BadRequestObjectResult(message));
         }
     }
@@ -99,18 +98,16 @@ namespace OpenChat.Api.Controllers
     }
     public class PublishPostRequest
     {
-        public PublishPostRequest(Guid userId, string text)
+        public PublishPostRequest(string text)
         {
-            this.userId = userId;
             this.text = text;
         }
 
-        public Guid userId;
         public string text;
     }
-    public class PublishPostResult
+    public class PostResult
     {
-        public PublishPostResult(Post post)
+        public PostResult(Post post)
         {
             postId = post.Id;
             userId = post.Publisher.Id;

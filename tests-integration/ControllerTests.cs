@@ -102,14 +102,14 @@ namespace OpenChat.Tests.Integration
             var userResult = (UserResult)registrationResult.Value;
             var userId = userResult.userId;
 
-            var request = new PublishPostRequest(userId, "Hello everyone. I'm Alice.");
+            var request = new PublishPostRequest("Hello everyone. I'm Alice.");
 
             // Act
             var result = controller.PublishPost(userId, request) as ObjectResult;
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, (HttpStatusCode)result.StatusCode);
-            var publishPostResult = (PublishPostResult)result.Value;
+            var publishPostResult = (PostResult)result.Value;
             Assert.NotEqual(Guid.Empty, publishPostResult.postId);
             Assert.Equal(userId, publishPostResult.userId);
             Assert.Equal(request.text, publishPostResult.text);
@@ -121,7 +121,7 @@ namespace OpenChat.Tests.Integration
             // Arrange
             var userId = Guid.NewGuid();
 
-            var request = new PublishPostRequest(userId, "Hello everyone. I'm Alice.");
+            var request = new PublishPostRequest("Hello everyone. I'm Alice.");
 
             // Act
             var result = controller.PublishPost(userId, request) as ObjectResult;
@@ -146,17 +146,17 @@ namespace OpenChat.Tests.Integration
             var date2ndPost = new DateTime(2018, 10, 1, 11, 30, 0);
 
             clock.Set(date1stPost);
-            _ = controller.PublishPost(userId, new PublishPostRequest(userId, "Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
+            _ = controller.PublishPost(userId, new PublishPostRequest("Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
             
             clock.Set(date2ndPost);
-            _ = controller.PublishPost(userId, new PublishPostRequest(userId, "Anything interesting happening tonight?")); // "10/01/2018 11:30:00"
+            _ = controller.PublishPost(userId, new PublishPostRequest("Anything interesting happening tonight?")); // "10/01/2018 11:30:00"
 
             // Act
             var result = controller.UserTimeline(userId);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-            var timelineResult = (IList<PublishPostResult>)result.Value;
+            var timelineResult = (IList<PostResult>)result.Value;
             Assert.Equal(2, timelineResult.Count());
 
             var topPost = timelineResult[0];
@@ -179,7 +179,7 @@ namespace OpenChat.Tests.Integration
             var date1stPost = new DateTime(2018, 10, 1, 9, 0, 0);
 
             clock.Set(date1stPost);
-            _ = controller.PublishPost(userId, new PublishPostRequest(userId, "Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
+            _ = controller.PublishPost(userId, new PublishPostRequest("Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
 
             // Act
             var result = controller.UserTimeline(Guid.NewGuid());
