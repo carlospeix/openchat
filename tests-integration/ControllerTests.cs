@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using OpenChat.Api;
@@ -126,16 +128,66 @@ namespace OpenChat.Tests.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
-            Assert.Equal("User does not exit.", result.Value);
+            Assert.Equal("User does not exist.", result.Value);
         }
 
         // Retrieve Posts (User timeline)
         // GET - openchat/users/{userId}/timeline [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "09:00:00" }]
         // Success Status OK - 200
         // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exit."
+        [Fact]
+        public void Posts_TimelineSucceeds()
+        {
+            // Arrange
+            var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var userResult = (UserResult)registrationResult.Value;
+            var userId = userResult.userId;
+            var date1stPost = new DateTime(2018, 10, 1, 9, 0, 0);
+            var date2ndPost = new DateTime(2018, 10, 1, 11, 30, 0);
 
+            clock.Set(date1stPost);
+            _ = controller.PublishPost(userId, new PublishPostRequest(userId, "Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
+            
+            clock.Set(date2ndPost);
+            _ = controller.PublishPost(userId, new PublishPostRequest(userId, "Anything interesting happening tonight?")); // "10/01/2018 11:30:00"
 
+            // Act
+            var result = controller.UserTimeline(userId);
 
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
+            var timelineResult = (IList<PublishPostResult>)result.Value;
+            Assert.Equal(2, timelineResult.Count());
+
+            var topPost = timelineResult[0];
+            Assert.Equal(userId, topPost.userId);
+            Assert.Equal("Anything interesting happening tonight?", topPost.text);
+            Assert.Equal(date2ndPost, topPost.publicationTime);
+
+            var bottomPost = timelineResult[1];
+            Assert.Equal(userId, bottomPost.userId);
+            Assert.Equal("Hello everyone. I'm Alice.", bottomPost.text);
+            Assert.Equal(date1stPost, bottomPost.publicationTime);
+        }
+        [Fact]
+        public void Posts_TimelineFails()
+        {
+            // Arrange
+            var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
+            var userResult = (UserResult)registrationResult.Value;
+            var userId = userResult.userId;
+            var date1stPost = new DateTime(2018, 10, 1, 9, 0, 0);
+
+            clock.Set(date1stPost);
+            _ = controller.PublishPost(userId, new PublishPostRequest(userId, "Hello everyone. I'm Alice.")); // "10/01/2018 09:00:00"
+
+            // Act
+            var result = controller.UserTimeline(Guid.NewGuid());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
+            Assert.Equal("User does not exist.", result.Value);
+        }
 
         // Follow User
         // POST - openchat/users/{userId}/follow { followerId: Alice ID, followeeId: Bob ID }

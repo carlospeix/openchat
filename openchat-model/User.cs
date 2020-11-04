@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace OpenChat.Model
 {
@@ -9,6 +11,8 @@ namespace OpenChat.Model
         public Guid Id { get; }
         public string Name { get; }
         public string About { get; }
+        
+        private readonly IList<Post> publishedPosts;
 
         public static User Create(string name, string about = "")
         {
@@ -28,11 +32,16 @@ namespace OpenChat.Model
             Id = Guid.NewGuid();
             Name = name;
             About = about;
+
+            publishedPosts = new List<Post>();
         }
 
         public Post Publish(string text, DateTime publicationTime)
         {
-            return Post.Create(this, text, publicationTime);
+            var post = Post.Create(this, text, publicationTime);
+            publishedPosts.Add(post);
+
+            return post;
         }
 
         public bool IdentifiedBy(Guid userId)
@@ -48,6 +57,14 @@ namespace OpenChat.Model
         public bool DescribedBy(string about)
         {
             return About.Equals(about);
+        }
+
+        internal IList<Post> Timeline()
+        {
+            return publishedPosts
+                .OrderByDescending(post => post.PublicationTime)
+                .ToList()
+                .AsReadOnly();
         }
     }
 }

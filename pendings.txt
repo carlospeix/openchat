@@ -1,5 +1,5 @@
 
 Refactorings
 X Tell, dont ask for the user name
-
-
+- Revisar objeto PublishPostRequest
+- Cambiar nombre a clase PublishPostResult

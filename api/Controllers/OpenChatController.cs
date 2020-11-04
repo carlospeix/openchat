@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using OpenChat.Model;
-using System;
 
 namespace OpenChat.Api.Controllers
 {
@@ -44,8 +45,17 @@ namespace OpenChat.Api.Controllers
         [HttpPost("/openchat/users/{userId}/posts")]
         public ObjectResult PublishPost([FromRoute] Guid userId, [FromBody] PublishPostRequest request)
         {
+            // TODO: Revisar estos parámetros
             return system.PublishPost<ObjectResult>(system.UserIdentifiedBy(userId), request.text,
                 (post) => new CreatedResult($"/openchat/posts/{post.Id}", new PublishPostResult(post)),
+                (message) => new BadRequestObjectResult(message));
+        }
+
+        [HttpPost("/openchat/users/{userId}/timeline")]
+        public ObjectResult UserTimeline(Guid userId)
+        {
+            return system.TimelineFor<ObjectResult>(system.UserIdentifiedBy(userId),
+                (timeline) => new OkObjectResult(timeline.Select(post => new PublishPostResult(post)).ToList()),
                 (message) => new BadRequestObjectResult(message));
         }
     }

@@ -13,11 +13,21 @@ namespace OpenChat.Model
 
         public virtual DateTime Now => DateTime.Now;
 
+        public virtual void Set(DateTime _)
+        {
+            throw new InvalidOperationException("Can't set system time.");
+        }
+
         private class FakeClock : Clock
         {
-            private readonly DateTime fakeNow = DateTime.Now;
+            private DateTime fakeNow = DateTime.Now;
 
             public override DateTime Now => fakeNow;
+
+            public override void Set(DateTime dateTime)
+            {
+                fakeNow = dateTime;
+            }
         }
     }
 }
