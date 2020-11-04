@@ -65,10 +65,7 @@ namespace OpenChat.Tests.Integration
         public async Task Post_PublishSuccess()
         {
             // Arrange
-            var carlos = new { username = "Carlos", password = "alki324d", about = "I love playing the piano and travelling." };
-            var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(carlos));
-            dynamic registrationResponse = await GetResponseFromAsync(httpRegistrationResponse);
-            var userId = Guid.Parse((string)registrationResponse.userId);
+            var userId = await RegisterUserAsync("Carlos", "irrelevant", "");
 
             // Act
             var post = new { text = "Hello everyone. I'm Carlos." };
@@ -110,15 +107,8 @@ namespace OpenChat.Tests.Integration
         public async Task Follow_ConnieFollowsMartaSuccess()
         {
             // Arrange
-            dynamic connieRegistration = await GetResponseFromAsync(
-                await client.PostAsync("/openchat/registration", GetContentFrom(
-                    new { username = "Connie", password = "alki324d", about = "" })));
-            var followerId = Guid.Parse((string)connieRegistration.userId);
-
-            dynamic martaRegistration = await GetResponseFromAsync(
-                await client.PostAsync("/openchat/registration", GetContentFrom(
-                    new { username = "Marta", password = "alki324d", about = "" })));
-            var followeeId = Guid.Parse((string)martaRegistration.userId);
+            var followerId = await RegisterUserAsync("Connie", "irrelevant", "");
+            var followeeId = await RegisterUserAsync("Marta", "irrelevant", "");
 
             // Act
             var followRequest = new { followeeId = followeeId };
@@ -155,11 +145,6 @@ namespace OpenChat.Tests.Integration
             var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(user));
             dynamic registrationResponse = await GetResponseFromAsync(httpRegistrationResponse);
             return Guid.Parse((string)registrationResponse.userId);
-            
-            //dynamic registration = await GetResponseFrom(
-            //    await client.PostAsync("/openchat/registration", GetContentFrom(
-            //        new { username = userName, password = password, about = about })));
-            //return Guid.Parse((string)registration.userId);
         }
 
         private HttpContent GetContentFrom(object content)
