@@ -93,7 +93,7 @@ namespace OpenChat.Tests.Integration
         // Success Status CREATED - 201 { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hello everyone. I'm Alice.", "date" : "10/01/2018", "time" : "11:30:00" }
         // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exit."
         [Fact]
-        public void User_PublishPostSucceeds()
+        public void Posts_PublishSucceeds()
         {
             // Arrange
             var registrationResult = controller.Registration(aliceRegistrationRequest) as ObjectResult;
@@ -114,7 +114,7 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(clock.Now, publishPostResult.publicationTime);
         }
         [Fact]
-        public void User_PublishPostFails()
+        public void Posts_PublishFails()
         {
             // Arrange
             var userId = Guid.NewGuid();
