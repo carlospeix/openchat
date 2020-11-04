@@ -85,5 +85,10 @@ namespace OpenChat.Model
 
             return fail(MSG_USER_DOES_NOT_EXIST);
         }
+
+        public T Follow<T>(User follower, User followee, Func<User, T> success)
+        {
+            return success(follower);
+        }
     }
 }

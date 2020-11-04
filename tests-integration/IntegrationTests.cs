@@ -71,22 +71,22 @@ namespace OpenChat.Tests.Integration
         // POST - openchat/users/{userId}/follow { followerId: Alice ID, followeeId: Bob ID }
         // Success Status OK - 201
         [Fact]
-        public async Task Follow_Success()
+        public async Task Follow_AliceFollowsMartaSuccess()
         {
             // Arrange
             dynamic aliceRegistration = await GetResponseFrom(
                 await client.PostAsync("/openchat/registration", GetContentFrom(
                     new { username = "Alice", password = "alki324d", about = "" })));
-            var followerUserId = Guid.Parse((string)aliceRegistration.userId);
+            var followerId = Guid.Parse((string)aliceRegistration.userId);
 
             dynamic martaRegistration = await GetResponseFrom(
                 await client.PostAsync("/openchat/registration", GetContentFrom(
                     new { username = "Marta", password = "alki324d", about = "" })));
-            var followeeUserId = Guid.Parse((string)martaRegistration.userId);
+            var followeeId = Guid.Parse((string)martaRegistration.userId);
 
             // Act
-            var followRequest = new { followerId = followerUserId };
-            var httpPublishResponse = await client.PostAsync($"/openchat/users/{followeeUserId}/follow", GetContentFrom(followRequest));
+            var followRequest = new { followeeId = followeeId };
+            var httpPublishResponse = await client.PostAsync($"/openchat/users/{followerId}/follow", GetContentFrom(followRequest));
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);

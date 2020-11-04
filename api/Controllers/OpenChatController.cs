@@ -16,15 +16,15 @@ namespace OpenChat.Api.Controllers
         }
 
         [HttpGet("/openchat/")]
-		public object GetStatus()
-		{
-			var responseObject = new
+        public object GetStatus()
+        {
+            var responseObject = new
             {
-				status = "Up"
-			};
+                status = "Up"
+            };
 
             return responseObject;
-		}
+        }
 
         [HttpPost("/openchat/registration")]
         public ObjectResult Registration([FromBody] RegistrationRequest request)
@@ -51,11 +51,20 @@ namespace OpenChat.Api.Controllers
         }
 
         [HttpPost("/openchat/users/{userId}/timeline")]
-        public ObjectResult UserTimeline(Guid userId)
+        public ObjectResult UserTimeline([FromRoute] Guid userId)
         {
             return system.TimelineFor<ObjectResult>(system.UserIdentifiedBy(userId),
                 (timeline) => new OkObjectResult(timeline.Select(post => new PostResult(post)).ToList()),
                 (message) => new BadRequestObjectResult(message));
+        }
+
+        [HttpPost("/openchat/users/{followerId}/follow")]
+        public IActionResult Follow([FromRoute] Guid followerId, [FromBody] FollowRequest request)
+        {
+            return system.Follow<IActionResult>(
+                system.UserIdentifiedBy(followerId),
+                system.UserIdentifiedBy(request.followeeId), 
+                (follower) => new CreatedResult($"/openchat/users/{follower.Id}/followees", null));
         }
     }
     public class RegistrationRequest
@@ -119,5 +128,14 @@ namespace OpenChat.Api.Controllers
         public Guid userId;
         public string text;
         public DateTime publicationTime;
+    }
+    public class FollowRequest
+    {
+        public FollowRequest(Guid followeeId)
+        {
+            this.followeeId = followeeId;
+        }
+
+        public Guid followeeId;
     }
 }
