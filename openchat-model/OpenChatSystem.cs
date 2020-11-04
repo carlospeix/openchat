@@ -13,6 +13,7 @@ namespace OpenChat.Model
         public const string MSG_USER_NAME_ALREADY_IN_USE = "Username already in use.";
         public const string MSG_INVALID_CREDENTIALS = "Invalid credentials.";
         public const string MSG_USER_DOES_NOT_EXIST = "User does not exist.";
+        public const string MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST = "At least one of the users does not exit.";
 
         public OpenChatSystem() : this(Clock.System)
         {
@@ -86,9 +87,13 @@ namespace OpenChat.Model
             return fail(MSG_USER_DOES_NOT_EXIST);
         }
 
-        public T Follow<T>(User follower, User followee, Func<User, T> success)
+        public T Follow<T>(User follower, User followee, Func<User, T> success, Func<string, T> fail)
         {
-            return success(follower);
+            if (registeredUsers.Any(user => user.Equals(follower))
+                && registeredUsers.Any(user => user.Equals(followee)))
+                return success(follower);
+
+            return fail(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);
         }
     }
 }

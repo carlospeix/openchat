@@ -15,6 +15,7 @@ namespace OpenChat.Tests.Integration
         private readonly Clock clock;
         private readonly OpenChatController controller;
         private readonly RegistrationRequest aliceRegistrationRequest;
+        private readonly RegistrationRequest martaRegistrationRequest;
 
         public ControllerTests()
         {
@@ -22,6 +23,7 @@ namespace OpenChat.Tests.Integration
             controller = new OpenChatController(new OpenChatSystem(clock));
             
             aliceRegistrationRequest = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
+            martaRegistrationRequest = new RegistrationRequest("Marta", "irrelevant", "irrelevant");
         }
 
         // Register New User
@@ -193,9 +195,22 @@ namespace OpenChat.Tests.Integration
         // POST - openchat/users/{userId}/follow { followerId: Alice ID, followeeId: Bob ID }
         // Success Status OK - 201
         // Failure Status: BAD_REQUEST - 400 (in case one of the users doesn't exist) Response: "At least one of the users does not exit."
+        [Fact]
+        public void Follow_NonExistentUserFails()
+        {
+            // Arrange
+            var registrationResult = controller.Registration(aliceRegistrationRequest);
+            var aliceResult = (UserResult)registrationResult.Value;
+            var followerId = aliceResult.userId;
+            var nonRegisteredUserId = Guid.NewGuid();
 
+            // Act
+            var result = controller.Follow(followerId, new FollowRequest(nonRegisteredUserId)) as BadRequestObjectResult;
 
-
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
+            Assert.Equal("At least one of the users does not exit.", result.Value);
+        }
 
         // Retrieve Wall
         // GET - openchat/users/{userId}/wall [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Planning to eat something with Charlie. Wanna join us?", "date" : "10/01/2018", "time" : "13:25:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "What's up everyone?", "date" : "10/01/2018", "time" : "11:20:50" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "CHARLIE_IDxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hi all. Charlie here.", "date" : "10/01/2018", "time" : "09:15:34" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "09:00:00" }]

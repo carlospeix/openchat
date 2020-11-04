@@ -64,7 +64,8 @@ namespace OpenChat.Api.Controllers
             return system.Follow<IActionResult>(
                 system.UserIdentifiedBy(followerId),
                 system.UserIdentifiedBy(request.followeeId), 
-                (follower) => new CreatedResult($"/openchat/users/{follower.Id}/followees", null));
+                (follower) => new CreatedResult($"/openchat/users/{follower.Id}/followees", null),
+                (message) => new BadRequestObjectResult(message));
         }
     }
     public class RegistrationRequest

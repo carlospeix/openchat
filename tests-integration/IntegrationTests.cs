@@ -7,6 +7,7 @@ using Xunit;
 using System.Net;
 using System;
 using System.Text;
+using Xunit.Abstractions;
 
 namespace OpenChat.Tests.Integration
 {
@@ -16,11 +17,13 @@ namespace OpenChat.Tests.Integration
     [Collection("Integration Tests")]
     public class IntegrationTests : IDisposable
     {
+        private readonly ITestOutputHelper output;
         private readonly HttpClient client;
 
-        public IntegrationTests(WebApplicationFactory<Startup> factory)
+        public IntegrationTests(WebApplicationFactory<Startup> factory, ITestOutputHelper output)
         {
-            client = factory.CreateClient();
+            this.client = factory.CreateClient();
+            this.output = output;
         }
 
         [Fact]
@@ -71,13 +74,13 @@ namespace OpenChat.Tests.Integration
         // POST - openchat/users/{userId}/follow { followerId: Alice ID, followeeId: Bob ID }
         // Success Status OK - 201
         [Fact]
-        public async Task Follow_AliceFollowsMartaSuccess()
+        public async Task Follow_ConnieFollowsMartaSuccess()
         {
             // Arrange
-            dynamic aliceRegistration = await GetResponseFrom(
+            dynamic connieRegistration = await GetResponseFrom(
                 await client.PostAsync("/openchat/registration", GetContentFrom(
-                    new { username = "Alice", password = "alki324d", about = "" })));
-            var followerId = Guid.Parse((string)aliceRegistration.userId);
+                    new { username = "Connie", password = "alki324d", about = "" })));
+            var followerId = Guid.Parse((string)connieRegistration.userId);
 
             dynamic martaRegistration = await GetResponseFrom(
                 await client.PostAsync("/openchat/registration", GetContentFrom(
