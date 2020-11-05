@@ -11,7 +11,7 @@ namespace OpenChat.Model
         public Guid Id { get; }
         public string Name { get; }
         public string About { get; }
-        
+
         private readonly IList<Post> publishedPosts;
         private readonly IList<User> followees;
 
@@ -76,7 +76,14 @@ namespace OpenChat.Model
                 .AsReadOnly();
         }
 
-        internal IList<Post> Wall() => Timeline();
+        internal IList<Post> Wall()
+        {
+            return followees.Aggregate(publishedPosts.AsEnumerable(),
+                (total, next) => total.Concat(next.Timeline()))
+                    .OrderByDescending(post => post.PublicationTime)
+                    .ToList()
+                    .AsReadOnly();
+        }
 
         public int FolloweesCount()
         {

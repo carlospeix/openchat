@@ -216,12 +216,71 @@ namespace OpenChat.Tests.Integration
         }
 
         // Retrieve Wall
-        // GET - openchat/users/{userId}/wall [{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Planning to eat something with Charlie. Wanna join us?", "date" : "10/01/2018", "time" : "13:25:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "What's up everyone?", "date" : "10/01/2018", "time" : "11:20:50" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "CHARLIE_IDxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hi all. Charlie here.", "date" : "10/01/2018", "time" : "09:15:34" },{ "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "09:00:00" }]
+        // GET - openchat/users/{userId}/wall [
+        //       { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Planning to eat something with Charlie. Wanna join us?", "date" : "10/01/2018", "time" : "13:25:00" },
+        //       { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "11:30:00" },
+        //       { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "BOB_IDxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "What's up everyone?", "date" : "10/01/2018", "time" : "11:20:50" },
+        //       { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "CHARLIE_IDxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Hi all. Charlie here.", "date" : "10/01/2018", "time" : "09:15:34" },
+        //       { "postId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "userId" : "ALICE_ID-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "text" : "Anything interesting happening tonight?", "date" : "10/01/2018", "time" : "09:00:00" }]
         // Success Status OK - 200
         // Failure Status: BAD_REQUEST - 400 (in case user does not exist) Response: "User does not exist."
+        [Fact]
+        public void Posts_WallSucceeds()
+        {
+            // Arrange
+            Guid aliceUserId = RegisterUser(aliceRegistrationRequest);
+            Guid bobUserId = RegisterUser("Bob", "irrelevant", "");
+            Guid charlieUserId = RegisterUser("Charlie","irrelevant","");
 
+            clock.Set(new DateTime(2018, 10, 1, 9, 0, 0));
+            _ = controller.PublishPost(aliceUserId,
+                new PublishPostRequest("Anything interesting happening tonight?"));
 
+            clock.Set(new DateTime(2018, 10, 1, 11, 30, 0));
+            _ = controller.PublishPost(aliceUserId,
+                new PublishPostRequest("Hello everyone. I'm Alice."));
 
+            clock.Set(new DateTime(2018, 10, 1, 13, 25, 0));
+            _ = controller.PublishPost(bobUserId,
+                new PublishPostRequest("Planning to eat something with Charlie. Wanna join us?"));
+
+            clock.Set(new DateTime(2018, 10, 1, 9, 15, 34));
+            _ = controller.PublishPost(charlieUserId,
+                new PublishPostRequest("Hi all. Charlie here."));
+
+            controller.Follow(aliceUserId, new FollowRequest(bobUserId));
+            controller.Follow(aliceUserId, new FollowRequest(charlieUserId));
+
+            // Act
+            var result = controller.UserWall(aliceUserId);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
+            var timelineResult = (IList<PostResult>)result.Value;
+            Assert.Equal(4, timelineResult.Count());
+
+            var topPost = timelineResult[0];
+            Assert.Equal(bobUserId, topPost.userId);
+            Assert.Equal("Planning to eat something with Charlie. Wanna join us?", topPost.text);
+            Assert.Equal(new DateTime(2018, 10, 1, 13, 25, 0), topPost.publicationTime);
+
+            var bottomPost = timelineResult[3];
+            Assert.Equal(aliceUserId, bottomPost.userId);
+            Assert.Equal("Anything interesting happening tonight?", bottomPost.text);
+            Assert.Equal(new DateTime(2018, 10, 1, 9, 0, 0), bottomPost.publicationTime);
+        }
+
+        private Guid RegisterUser(string userName, string password, string about)
+        {
+            return RegisterUser(new RegistrationRequest(userName, password, about));
+        }
+
+        private Guid RegisterUser(RegistrationRequest aliceRegistrationRequest)
+        {
+            var registrationResult = controller.Registration(aliceRegistrationRequest);
+            var userResult = (UserResult)registrationResult.Value;
+            return userResult.userId;
+        }
 
         // Retrieve All Users
         // GET - openchat/users [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
