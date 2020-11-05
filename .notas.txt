@@ -1,5 +1,6 @@
 
-Refactorings
+Pendientes (- pendiente, X done)
+
 X Tell, dont ask for the user name
 X Revisar objeto PublishPostRequest
 X Cambiar nombre a clase PublishPostResul
@@ -7,7 +8,16 @@ X Escribir los tests de Clock y FakeClock
 - Mejorar implementación de método LoginUser<T> en la clase OpenChatSystem
 
 
+Decisiones
 
+- Probar el middleware (routing, DI, binding, etc) con pruebas end to end simples desde la interfaz HTTP
+- El controller funciona como conector entre el mundo HTTP y el dominio (equivalente al Recepcionist)
+- Uso binding por DTOs en la frontera HTTP, de entrada y de salida
+- Hice algunos ajustes en los jsons de la API porque no me cerraban
+
+
+
+Proceso de diseño y desarrollo
 
 1  ) Escribir el test end to end mas simple posible
 2.1) Verificar que falla por la razon correcta

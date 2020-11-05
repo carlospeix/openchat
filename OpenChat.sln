@@ -14,10 +14,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DF7349E-0019-4AFC-BF73-574D068A364E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.notas.txt = .notas.txt
 		coverage-collect.bat = coverage-collect.bat
 		coverage-report.bat = coverage-report.bat
 		coverlet.runsettings = coverlet.runsettings
-		pendings.txt = pendings.txt
 	EndProjectSection
 EndProject
 Global
