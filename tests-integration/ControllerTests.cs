@@ -270,6 +270,16 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(new DateTime(2018, 10, 1, 9, 0, 0), bottomPost.publicationTime);
         }
 
+        // Retrieve All Users
+        // GET - openchat/users [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
+        // Success Status OK - 200
+
+        // Retrieve all users followed by another user (followees)
+        // GET - openchat/users/{userId}/followees [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
+        // Success Status OK - 200
+
+
+
         private Guid RegisterUser(string userName, string password, string about)
         {
             return RegisterUser(new RegistrationRequest(userName, password, about));
@@ -281,16 +291,5 @@ namespace OpenChat.Tests.Integration
             var userResult = (UserResult)registrationResult.Value;
             return userResult.userId;
         }
-
-        // Retrieve All Users
-        // GET - openchat/users [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
-        // Success Status OK - 200
-
-
-
-
-        // Retrieve all users followed by another user (followees)
-        // GET - openchat/users/{userId}/followees [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
-        // Success Status OK - 200
     }
 }

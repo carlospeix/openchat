@@ -46,11 +46,11 @@ namespace OpenChat.Model
 
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
         {
-            // TODO cambiar por linq
-            var user = registeredUsers.Where(user => user.IsNamed(userName)).FirstOrDefault();
-
-            if (user != null && CredentialMatches(user, password))
-                return success(user);
+            if (registeredCredentials.Any(
+                (kvp) => 
+                    kvp.Key.IsNamed(userName) && 
+                    kvp.Value.WithPassword(password)))
+                return success(registeredUsers.Find(user => user.IsNamed(userName)));
             else
                 return fail(MSG_INVALID_CREDENTIALS);
         }
@@ -58,11 +58,6 @@ namespace OpenChat.Model
         public int RegisteredUsersCount()
         {
             return registeredUsers.Count();
-        }
-
-        private bool CredentialMatches(User user, string password)
-        {
-            return registeredCredentials.Any((kv) => kv.Key.Equals(user) && kv.Value.WithPassword(password));
         }
 
         private void AssertNewUserNameDoesNotExist(string userName)

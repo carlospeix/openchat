@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using OpenChat.Model;
-using System;
 using Xunit;
+using Xunit.Sdk;
 
 namespace OpenChat.Tests
 {
@@ -23,6 +23,43 @@ namespace OpenChat.Tests
 
             var json = JsonConvert.SerializeObject(user);
             Assert.DoesNotContain("Pass0rd!", json);
+        }
+
+        [Fact]
+        public void CanLoginWithGoodUserNameAndPassword()
+        {
+            _ = system.RegisterUser<User>("Carlos", "Pass0rd!", "",
+                (user) => default,
+                (message) => default);
+
+            var user = system.LoginUser<User>("Carlos", "Pass0rd!",
+                (user) => user,
+                (message) => throw new XunitException("Should had not failed becaus correct user name and password"));
+        }
+
+        [Fact]
+        public void CanNotLoginWithWrongPassword()
+        {
+            _ = system.RegisterUser<User>("Carlos", "Pass0rd!", "",
+                (user) => user,
+                (message) => default);
+
+            var user = system.LoginUser<User>("Carlos", "WRONG",
+                (user) => throw new XunitException("Should had failed because of wrong password."),
+                (message) => default);
+        }
+
+        // CanNotLoginWithWrongUserName
+        [Fact]
+        public void CanNotLoginWithWrongUserName()
+        {
+            _ = system.RegisterUser<User>("Carlos", "Pass0rd!", "",
+                (user) => user,
+                (message) => default);
+
+            var user = system.LoginUser<User>("WRONG", "Pass0rd!",
+                (user) => throw new XunitException("Should had failed because of wrong password."),
+                (message) => default);
         }
 
         [Fact]
@@ -63,50 +100,70 @@ namespace OpenChat.Tests
         [Fact]
         public void Follow_CanFollowUser()
         {
-            var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
+            var follower = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => user,
                 (message) => default);
-            var martaUser = system.RegisterUser("Marta", "irrelevant", "",
+            var followee = system.RegisterUser("Marta", "irrelevant", "",
                 (user) => user,
                 (message) => default);
 
-            _ = system.Follow(aliceUser, martaUser,
+            _ = system.Follow(follower, followee,
                 (user) => user, (message) => default);
 
-            Assert.Equal(1, aliceUser.FolloweesCount());
+            Assert.Equal(1, follower.FolloweesCount());
         }
 
         [Fact]
-        public void Follow_CanNotFollowNonExistenUser()
+        public void Follow_CanNotFollowNonExistentFollowee()
         {
-            var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
+            var follower = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => user,
                 (message) => default);
-            var martaUser = system.RegisterUser("Marta", "irrelevant", "",
+            var nonExistingFollowee = User.Create("No existis");
+
+            _ = system.Follow<User>(follower, nonExistingFollowee,
+                (user) => throw new XunitException("Should had failed because of non existent followee."),
+                (message) => {
+                    Assert.Equal(OpenChatSystem.MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST, message);
+                    return default;
+                    });
+
+            Assert.Equal(0, follower.FolloweesCount());
+        }
+
+        [Fact]
+        public void Follow_NonExistenFollowerCanNotFollow()
+        {
+            var nonExistingFollower = User.Create("No existis");
+            var followee = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => user,
                 (message) => default);
-            var nonExistingUser = User.Create("No existis");
 
-            _ = system.Follow(aliceUser, martaUser, (user) => user, (message) => default);
-            _ = system.Follow(aliceUser, nonExistingUser, (user) => user, (message) => default);
+            _ = system.Follow<User>(nonExistingFollower, followee, 
+                (user) => throw new XunitException("Should had failed because of non existent followee."), 
+                (message) => {
+                    Assert.Equal(OpenChatSystem.MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST, message);
+                    return default;
+                });
 
-            Assert.Equal(1, aliceUser.FolloweesCount());
+            Assert.Equal(0, nonExistingFollower.FolloweesCount());
         }
 
         [Fact]
         public void Follow_FollowingTheSameUserTwiceDoesNotFail()
         {
-            var aliceUser = system.RegisterUser("Alice", "irrelevant", "",
+            var follower = system.RegisterUser("Alice", "irrelevant", "",
                 (user) => user,
                 (message) => default);
-            var martaUser = system.RegisterUser("Marta", "irrelevant", "",
+            var followee = system.RegisterUser("Marta", "irrelevant", "",
                 (user) => user,
                 (message) => default);
 
-            _ = system.Follow(aliceUser, martaUser, (user) => user, (message) => default);
-            _ = system.Follow(aliceUser, martaUser, (user) => user, (message) => default);
+            _ = system.Follow(follower, followee, (user) => user, (message) => default);
+            _ = system.Follow(follower, followee, (user) => user,
+                (message) => throw new XunitException("Should had not failed because of duplicate follow."));
 
-            Assert.Equal(1, aliceUser.FolloweesCount());
+            Assert.Equal(1, follower.FolloweesCount());
         }
     }
 }

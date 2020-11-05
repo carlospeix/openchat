@@ -33,7 +33,7 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void CantCreateCredentialWithEmptyPassword()
+        public void CanNotCreateCredentialWithEmptyPassword()
         {
             var exception = Assert.Throws<InvalidOperationException>(
                 () => Credential.Create("")
