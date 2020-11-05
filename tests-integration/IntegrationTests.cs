@@ -139,6 +139,26 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(1, response.Count);
         }
 
+        // Retrieve All Users
+        // GET - openchat/users [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
+        // Success Status OK - 200
+        [Fact]
+        public async Task Users_RetrieveAllSuccess()
+        {
+            // Arrange
+            _ = await RegisterUserAsync("Alice2", "irrelevant", "");
+            _ = await RegisterUserAsync("Bob2", "irrelevant", "");
+            _ = await RegisterUserAsync("Charlie2", "irrelevant", "");
+
+            // Act
+            var httpUsersResponse = await client.GetAsync($"/openchat/users"); ;
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpUsersResponse.StatusCode);
+            dynamic users = await GetResponseFromAsync(httpUsersResponse);
+            Assert.True(users.Count > 0);
+        }
+
         private async Task<Guid> RegisterUserAsync(string userName, string password, string about)
         {
             var user = new { username = userName, password = password, about = about };

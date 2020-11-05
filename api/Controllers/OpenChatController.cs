@@ -75,6 +75,12 @@ namespace OpenChat.Api.Controllers
                 (wall) => new OkObjectResult(wall.Select(post => new PostResult(post)).ToList()));
         }
 
+        [HttpGet("/openchat/users")]
+        public ObjectResult Users()
+        {
+            return new OkObjectResult(system.Users().Select(user => new UserResult(user)).ToList());
+        }
+
     }
     public class RegistrationRequest
     {
