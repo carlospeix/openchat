@@ -275,10 +275,20 @@ namespace OpenChat.Tests.Integration
         // Success Status OK - 200
 
 
-
         // Retrieve all users followed by another user (followees)
         // GET - openchat/users/{userId}/followees [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
         // Success Status OK - 200
+        [Fact]
+        public void Follows_FolloweesOfNonExistentUserFails()
+        {
+            // Act
+            var result = controller.Followees(Guid.NewGuid());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
+            Assert.Equal(OpenChatSystem.MSG_USER_DOES_NOT_EXIST, result.Value);
+        }
+
 
 
         private Guid RegisterUser(string userName, string password, string about)

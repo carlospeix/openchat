@@ -108,9 +108,12 @@ namespace OpenChat.Model
             return fail(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);
         }
 
-        public T FolloweesFor<T>(User user, Func<IList<User>, T> success)
+        public T FolloweesFor<T>(User user, Func<IList<User>, T> success, Func<string, T> fail)
         {
-            return success(user.Followees());
+            if (registeredUsers.Any(user => user.Equals(user))) 
+                return success(user.Followees());
+
+            return fail(MSG_USER_DOES_NOT_EXIST);
         }
     }
 }
