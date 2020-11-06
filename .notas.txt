@@ -6,6 +6,12 @@ X Revisar objeto PublishPostRequest
 X Cambiar nombre a clase PublishPostResul
 X Escribir los tests de Clock y FakeClock
 X Mejorar implementación de método LoginUser<T> en la clase OpenChatSystem
+- Implementación de palabras inapropiadas (elephant, ice cream, orange)
+- Implementación de likes de posts
+
+- Autenticación y autorización basada en token
+- Persistencia
+
 
 
 Decisiones
@@ -24,5 +30,5 @@ Proceso de diseño y desarrollo
  .2) Código más simple posible para pasar
  .3) Verde? Si no, volvemos a 2.1
 3  ) Refactorings?
-4  ) Analizamos más pruebas a nivel de controller
-5  ) Analizamos más pruebas a nivel de sistema y unitarios
+4  ) Analizamos diseño (tests, modelo) a nivel de controller
+5  ) Analizamos diseño (tests, modelo) a nivel de sistema y unitarios
