@@ -81,6 +81,12 @@ namespace OpenChat.Api.Controllers
             return new OkObjectResult(system.Users().Select(user => new UserResult(user)).ToList());
         }
 
+        [HttpGet("/openchat/users/{userId}/followees")]
+        public ObjectResult Followees([FromRoute] Guid userId)
+        {
+            return system.FolloweesFor<ObjectResult>(system.UserIdentifiedBy(userId),
+                (followees) => new OkObjectResult(followees.Select(user => new UserResult(user)).ToList()));
+        }
     }
     public class RegistrationRequest
     {

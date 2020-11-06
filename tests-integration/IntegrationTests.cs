@@ -159,6 +159,29 @@ namespace OpenChat.Tests.Integration
             Assert.True(users.Count > 0);
         }
 
+        // Retrieve all users followed by another user (followees)
+        // GET - openchat/users/{userId}/followees [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
+        // Success Status OK - 200
+        [Fact]
+        public async Task Users_RetrieveFolloweesSuccess()
+        {
+            // Arrange
+            var connieId = await RegisterUserAsync("ConnieH", "irrelevant", "");
+            var martaId = await RegisterUserAsync("MartaH", "irrelevant", "");
+            var bobId = await RegisterUserAsync("BobH", "irrelevant", "");
+            _ = await client.PostAsync($"/openchat/users/{connieId}/follow", GetContentFrom(new { followeeId = martaId }));
+            _ = await client.PostAsync($"/openchat/users/{connieId}/follow", GetContentFrom(new { followeeId = bobId }));
+
+            // Act
+            var httpFolloweessResponse = await client.GetAsync($"/openchat/users/{connieId}/followees");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpFolloweessResponse.StatusCode);
+            dynamic followees = await GetResponseFromAsync(httpFolloweessResponse);
+            Assert.Equal(2, followees.Count);
+        }
+
+
         private async Task<Guid> RegisterUserAsync(string userName, string password, string about)
         {
             var user = new { username = userName, password = password, about = about };

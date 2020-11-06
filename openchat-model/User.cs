@@ -89,5 +89,10 @@ namespace OpenChat.Model
         {
             return followees.Count();
         }
+
+        public IList<User> Followees()
+        {
+            return followees.ToList().AsReadOnly();
+        }
     }
 }
