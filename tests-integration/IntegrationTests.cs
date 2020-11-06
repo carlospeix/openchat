@@ -45,17 +45,33 @@ namespace OpenChat.Tests.Integration
         {
             // Arrange
             var alice = new { username = "Alice", password = "alki324d", about = "I love playing the piano and travelling." };
-            var content = GetContentFrom(alice);
 
             // Act
-            var httpResponse = await client.PostAsync("/openchat/registration", content);
+            var httpResponse = await client.PostAsync("/openchat/registration", GetContentFrom(alice));
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
             dynamic response = await GetResponseFromAsync(httpResponse);
-            Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.userId));
             Assert.Equal(alice.username, (string)response.username);
-            Assert.Equal(alice.about, (string)response.about);
+        }
+
+        // Login
+        // POST - openchat/login { "username" : "Alice" "password" : "alki324d" }
+        // Success Status OK - 200 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing the piano and travelling." }
+        // Failure Status: BAD_REQUEST - 400 Response: "Invalid credentials."
+        [Fact]
+        public async Task User_LoginSuccess()
+        {
+            // Arrange
+            var alice = new { username = "Alice", password = "alki324d", about = "I love playing the piano and travelling." };
+            _ = await client.PostAsync("/openchat/registration", GetContentFrom(alice));
+
+            var httpResponse = await client.PostAsync("/openchat/login", GetContentFrom(new { username = "Alice", password = "alki324d" }));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+            dynamic response = await GetResponseFromAsync(httpResponse);
+            Assert.Equal(alice.username, (string)response.username);
         }
 
         // Create Post
@@ -74,9 +90,7 @@ namespace OpenChat.Tests.Integration
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);
             dynamic response = await GetResponseFromAsync(httpPublishResponse);
-            Assert.NotEqual(Guid.Empty, Guid.Parse((string)response.postId));
             Assert.Equal(userId, Guid.Parse((string)response.userId));
-            Assert.Equal(post.text, (string)response.text);
         }
 
         // Retrieve Posts (User timeline)

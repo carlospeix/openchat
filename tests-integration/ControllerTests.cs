@@ -289,8 +289,6 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(OpenChatSystem.MSG_USER_DOES_NOT_EXIST, result.Value);
         }
 
-
-
         private Guid RegisterUser(string userName, string password, string about)
         {
             return RegisterUser(new RegistrationRequest(userName, password, about));
