@@ -14,7 +14,6 @@ namespace OpenChat.Tests.Integration
         private readonly Clock clock;
         private readonly OpenChatController controller;
         private readonly RegistrationRequest aliceRegistrationRequest;
-        private readonly RegistrationRequest martaRegistrationRequest;
 
         public ControllerTests()
         {
@@ -22,7 +21,6 @@ namespace OpenChat.Tests.Integration
             controller = new OpenChatController(new OpenChatSystem(clock));
             
             aliceRegistrationRequest = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
-            martaRegistrationRequest = new RegistrationRequest("Marta", "irrelevant", "irrelevant");
         }
 
         // Register New User

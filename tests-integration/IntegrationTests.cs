@@ -102,7 +102,7 @@ namespace OpenChat.Tests.Integration
         {
             // Arrange
             var markId = await RegisterUserAsync("Mark", "irrelevant", "");
-            var httpPublishResponse = await client.PostAsync($"/openchat/users/{markId}/posts",
+            _ = await client.PostAsync($"/openchat/users/{markId}/posts",
                 GetContentFrom(new { text = "Anything interesting happening tonight?" }));
 
             // Act
