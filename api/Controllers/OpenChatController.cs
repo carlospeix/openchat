@@ -72,7 +72,8 @@ namespace OpenChat.Api.Controllers
         public ObjectResult UserWall([FromRoute] Guid userId)
         {
             return system.WallFor<ObjectResult>(system.UserIdentifiedBy(userId),
-                (wall) => new OkObjectResult(wall.Select(post => new PostResult(post)).ToList()));
+                (wall) => new OkObjectResult(wall.Select(post => new PostResult(post)).ToList()),
+                (message) => new BadRequestObjectResult(message));
         }
 
         [HttpGet("/openchat/users")]

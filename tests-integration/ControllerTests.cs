@@ -268,6 +268,17 @@ namespace OpenChat.Tests.Integration
             Assert.Equal(new DateTime(2018, 10, 1, 9, 0, 0), bottomPost.publicationTime);
         }
 
+        [Fact]
+        public void Posts_WallFails()
+        {
+            // Act
+            var result = controller.UserWall(Guid.NewGuid());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
+            Assert.Equal(OpenChatSystem.MSG_USER_DOES_NOT_EXIST, result.Value);
+        }
+
         // Retrieve All Users
         // GET - openchat/users [{ "userId" : "123e4567-e89b-12d3-a456-426655440000", "username" : "Alice", "about" : "I love playing the pianno and travel.", },{ "userId" : "093f2342-e89b-12d3-a456-426655440000", "username" : "Bob", "about" : "Writer and photographer. Passionate about food and languages." },{ "userId" : "316h3543-e89b-12d3-a456-426655440000", "username" : "Charlie", "about" : "I'm a basketball player, love cycling and meeting new people. " }]
         // Success Status OK - 200
