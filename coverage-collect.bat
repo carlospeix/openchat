@@ -2,7 +2,7 @@
 rmdir /S /Q .\Coverage\
 
 rem https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/VSTestIntegration.md
-dotnet test --collect:"XPlat Code Coverage" --results-directory:Coverage
+dotnet test --collect:"XPlat Code Coverage" --results-directory:Coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.IncludeTestAssembly=true
 rem --settings coverlet.runsettings
 
 REM Movemos los archivos a .\Converage\

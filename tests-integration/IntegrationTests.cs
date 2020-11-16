@@ -47,7 +47,7 @@ namespace OpenChat.Tests.Integration
             var alice = new { username = "Alice", password = "alki324d", about = "I love playing the piano and travelling." };
 
             // Act
-            var httpResponse = await client.PostAsync("/openchat/registration", GetContentFrom(alice));
+            var httpResponse = await client.PostAsync("/openchat/registration", GetJsonFrom(alice));
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
@@ -64,9 +64,9 @@ namespace OpenChat.Tests.Integration
         {
             // Arrange
             var alice = new { username = "Alice", password = "alki324d", about = "I love playing the piano and travelling." };
-            _ = await client.PostAsync("/openchat/registration", GetContentFrom(alice));
+            _ = await client.PostAsync("/openchat/registration", GetJsonFrom(alice));
 
-            var httpResponse = await client.PostAsync("/openchat/login", GetContentFrom(new { username = "Alice", password = "alki324d" }));
+            var httpResponse = await client.PostAsync("/openchat/login", GetJsonFrom(new { username = "Alice", password = "alki324d" }));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
@@ -85,7 +85,7 @@ namespace OpenChat.Tests.Integration
 
             // Act
             var post = new { text = "Hello everyone. I'm Carlos." };
-            var httpPublishResponse = await client.PostAsync($"/openchat/users/{userId}/posts", GetContentFrom(post));
+            var httpPublishResponse = await client.PostAsync($"/openchat/users/{userId}/posts", GetJsonFrom(post));
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);
@@ -103,7 +103,7 @@ namespace OpenChat.Tests.Integration
             // Arrange
             var markId = await RegisterUserAsync("Mark", "irrelevant", "");
             _ = await client.PostAsync($"/openchat/users/{markId}/posts",
-                GetContentFrom(new { text = "Anything interesting happening tonight?" }));
+                GetJsonFrom(new { text = "Anything interesting happening tonight?" }));
 
             // Act
             var httpTimelineResponse = await client.GetAsync($"/openchat/users/{markId}/timeline");
@@ -126,7 +126,7 @@ namespace OpenChat.Tests.Integration
 
             // Act
             var followRequest = new { followeeId = followeeId };
-            var httpPublishResponse = await client.PostAsync($"/openchat/users/{followerId}/follow", GetContentFrom(followRequest));
+            var httpPublishResponse = await client.PostAsync($"/openchat/users/{followerId}/follow", GetJsonFrom(followRequest));
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, httpPublishResponse.StatusCode);
@@ -142,7 +142,7 @@ namespace OpenChat.Tests.Integration
             // Arrange
             var aliceId = await RegisterUserAsync("Alice1", "irrelevant", "");
             _ = await client.PostAsync($"/openchat/users/{aliceId}/posts",
-                GetContentFrom(new { text = "Anything interesting happening tonight?" }));
+                GetJsonFrom(new { text = "Anything interesting happening tonight?" }));
 
             // Act
             var httpWallResponse = await client.GetAsync($"/openchat/users/{aliceId}/wall");
@@ -183,8 +183,8 @@ namespace OpenChat.Tests.Integration
             var connieId = await RegisterUserAsync("ConnieH", "irrelevant", "");
             var martaId = await RegisterUserAsync("MartaH", "irrelevant", "");
             var bobId = await RegisterUserAsync("BobH", "irrelevant", "");
-            _ = await client.PostAsync($"/openchat/users/{connieId}/follow", GetContentFrom(new { followeeId = martaId }));
-            _ = await client.PostAsync($"/openchat/users/{connieId}/follow", GetContentFrom(new { followeeId = bobId }));
+            _ = await client.PostAsync($"/openchat/users/{connieId}/follow", GetJsonFrom(new { followeeId = martaId }));
+            _ = await client.PostAsync($"/openchat/users/{connieId}/follow", GetJsonFrom(new { followeeId = bobId }));
 
             // Act
             var httpFolloweessResponse = await client.GetAsync($"/openchat/users/{connieId}/followees");
@@ -199,12 +199,12 @@ namespace OpenChat.Tests.Integration
         private async Task<Guid> RegisterUserAsync(string userName, string password, string about)
         {
             var user = new { username = userName, password = password, about = about };
-            var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetContentFrom(user));
+            var httpRegistrationResponse = await client.PostAsync("/openchat/registration", GetJsonFrom(user));
             dynamic registrationResponse = await GetResponseFromAsync(httpRegistrationResponse);
             return Guid.Parse((string)registrationResponse.userId);
         }
 
-        private HttpContent GetContentFrom(object content)
+        private static HttpContent GetJsonFrom(object content)
         {
             return new StringContent(
                 JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
