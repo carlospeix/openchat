@@ -37,9 +37,9 @@ namespace OpenChat.Api.Controllers
         [HttpPost("/openchat/login")]
         public ObjectResult Login([FromBody] LoginRequest request)
         {
-            return system.LoginUser<ObjectResult>(request.username, request.password,
-                (user) => new OkObjectResult(new UserResult(user)),
-                (message) => new BadRequestObjectResult(message));
+            return DispatchRequest(
+                () => system.LoginUser(request.username, request.password),
+                (user) => new OkObjectResult(new UserResult(user)));
         }
 
         [HttpPost("/openchat/users/{userId}/posts")]

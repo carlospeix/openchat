@@ -37,15 +37,15 @@ namespace OpenChat.Model
             return user;
         }
 
-        public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)
+        public User LoginUser(string userName, string password)
         {
-            if (registeredCredentials.Any(
-                (kvp) => 
-                    kvp.Key.IsNamed(userName) && 
-                    kvp.Value.WithPassword(password)))
-                return success(registeredUsers.Find(user => user.IsNamed(userName)));
-            else
-                return fail(MSG_INVALID_CREDENTIALS);
+            var user = registeredCredentials.SingleOrDefault(
+                (kvp) => kvp.Key.IsNamed(userName) && kvp.Value.WithPassword(password)).Key;
+
+            if (user == default(User))
+                throw new InvalidOperationException(MSG_INVALID_CREDENTIALS);
+
+            return user;
         }
 
         public int RegisteredUsersCount()

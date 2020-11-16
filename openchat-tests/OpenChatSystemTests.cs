@@ -29,9 +29,9 @@ namespace OpenChat.Tests
         {
             _ = system.RegisterUser("Carlos", "Pass0rd!", "");
 
-            var user = system.LoginUser<User>("Carlos", "Pass0rd!",
-                (user) => user,
-                (message) => throw new XunitException("Should had not failed because correct user name and password"));
+            var user = system.LoginUser("Carlos", "Pass0rd!");
+
+            Assert.True(user.IsNamed("Carlos"));
         }
 
         [Fact]
@@ -39,9 +39,10 @@ namespace OpenChat.Tests
         {
             _ = system.RegisterUser("Carlos", "Pass0rd!", "");
 
-            var user = system.LoginUser<User>("Carlos", "WRONG",
-                (user) => throw new XunitException("Should had failed because of wrong password."),
-                (message) => default);
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => system.LoginUser("Carlos", "WRONG"));
+
+            Assert.Equal(OpenChatSystem.MSG_INVALID_CREDENTIALS, exception.Message);
         }
 
         // CanNotLoginWithWrongUserName
@@ -50,9 +51,10 @@ namespace OpenChat.Tests
         {
             _ = system.RegisterUser("Carlos", "Pass0rd!", "");
 
-            var user = system.LoginUser<User>("WRONG", "Pass0rd!",
-                (user) => throw new XunitException("Should had failed because of wrong password."),
-                (message) => default);
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => system.LoginUser("WRONG", "Pass0rd!"));
+
+            Assert.Equal(OpenChatSystem.MSG_INVALID_CREDENTIALS, exception.Message);
         }
 
         [Fact]
