@@ -46,7 +46,7 @@ namespace OpenChat.Model
             return post;
         }
 
-        internal User Follows(User followee)
+        internal User Follow(User followee)
         {
             if (!followees.Contains(followee))
                 followees.Add(followee);

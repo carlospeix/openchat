@@ -20,9 +20,9 @@ namespace OpenChat.Model
             this.password = password;
         }
 
-        public bool WithPassword(string potentialPassword)
+        public bool WithPassword(string password)
         {
-            return password.Equals(potentialPassword);
+            return this.password.Equals(password);
         }
 
         private static void AssertPasswordIsNotEmpty(string password)

@@ -102,7 +102,7 @@ namespace OpenChat.Model
             if (registeredUsers.Any(user => user.Equals(follower))
                 && registeredUsers.Any(user => user.Equals(followee)))
             {
-                return success(follower.Follows(followee));
+                return success(follower.Follow(followee));
             }
 
             return fail(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);

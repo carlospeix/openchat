@@ -15,7 +15,7 @@ namespace OpenChat.Model
 
         public virtual void Set(DateTime _)
         {
-            throw new InvalidOperationException("Can't set system time.");
+            throw new InvalidOperationException("Can't set system time. Please use the FakeClock instead.");
         }
 
         private class FakeClock : Clock
