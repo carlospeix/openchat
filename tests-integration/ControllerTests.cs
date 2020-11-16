@@ -17,7 +17,7 @@ namespace OpenChat.Tests.Integration
 
         public ControllerTests()
         {
-            clock = Clock.Fake;
+            clock = Clock.Simulated;
             controller = new OpenChatController(new OpenChatSystem(clock));
             
             aliceRegistrationRequest = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");

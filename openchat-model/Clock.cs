@@ -5,7 +5,7 @@ namespace OpenChat.Model
     public class Clock
     {
         public static Clock System => new Clock();
-        public static Clock Fake => new FakeClock();
+        public static Clock Simulated => new SimulatedClock();
 
         protected Clock()
         {
@@ -15,10 +15,10 @@ namespace OpenChat.Model
 
         public virtual void Set(DateTime _)
         {
-            throw new InvalidOperationException("Can't set system time. Please use the FakeClock instead.");
+            throw new InvalidOperationException("Can't set system time. Please use the SimulatedClock instead.");
         }
 
-        private class FakeClock : Clock
+        private class SimulatedClock : Clock
         {
             private DateTime fakeNow = DateTime.Now;
 

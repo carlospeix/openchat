@@ -21,7 +21,7 @@ namespace OpenChat.Tests
         [Fact]
         public void FakeClockDoesntRun()
         {
-            var clock = Clock.Fake;
+            var clock = Clock.Simulated;
 
             var now = clock.Now;
             Thread.Sleep(5);
@@ -32,7 +32,7 @@ namespace OpenChat.Tests
         [Fact]
         public void CanSetTheClockFromOutside()
         {
-            var clock = Clock.Fake;
+            var clock = Clock.Simulated;
             var now = DateTime.Now;
 
             clock.Set(now);
