@@ -34,7 +34,7 @@ namespace OpenChat.Tests
 
             var user = system.LoginUser<User>("Carlos", "Pass0rd!",
                 (user) => user,
-                (message) => throw new XunitException("Should had not failed becaus correct user name and password"));
+                (message) => throw new XunitException("Should had not failed because correct user name and password"));
         }
 
         [Fact]

@@ -52,8 +52,7 @@ namespace OpenChat.Tests
         [Fact]
         public void UserIsThePublisherOfHerPost()
         {
-            var publicationTime = DateTime.Now;
-            var post = carlos.Publish("Nice post.", publicationTime);
+            var post = carlos.Publish("Nice post.", DateTime.Now);
 
             Assert.Equal(carlos, post.Publisher);
         }
