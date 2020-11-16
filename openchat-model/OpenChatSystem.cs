@@ -28,7 +28,7 @@ namespace OpenChat.Model
         {
             try
             {
-                AssertNewUserNameDoesNotExist(userName);
+                AssertNewUserNameIsNotRegistered(userName);
 
                 var credential = Credential.Create(password);
                 var user = User.Create(userName, about);
@@ -60,7 +60,7 @@ namespace OpenChat.Model
             return registeredUsers.Count();
         }
 
-        private void AssertNewUserNameDoesNotExist(string userName)
+        private void AssertNewUserNameIsNotRegistered(string userName)
         {
             if (registeredUsers.Any(user => user.IsNamed(userName)))
                 throw new InvalidOperationException(MSG_USER_NAME_ALREADY_IN_USE);
