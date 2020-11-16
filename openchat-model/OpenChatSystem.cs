@@ -73,26 +73,26 @@ namespace OpenChat.Model
 
         public T PublishPost<T>(User publisher, string text, Func<Post, T> success, Func<string, T> fail)
         {
-            if (registeredUsers.Any(user => user.Equals(publisher)))
-                return success(publisher.Publish(text, clock.Now));
+            if (UserIsNotRegistered(publisher))
+                return fail(MSG_USER_DOES_NOT_EXIST);
 
-            return fail(MSG_USER_DOES_NOT_EXIST);
+            return success(publisher.Publish(text, clock.Now));
         }
 
         public T TimelineFor<T>(User publisher, Func<IList<Post>, T> success, Func<string, T> fail)
         {
-            if (registeredUsers.Any(user => user.Equals(publisher)))
-                return success(publisher.Timeline());
+            if (UserIsNotRegistered(publisher))
+                return fail(MSG_USER_DOES_NOT_EXIST);
 
-            return fail(MSG_USER_DOES_NOT_EXIST);
+            return success(publisher.Timeline());
         }
 
         public T WallFor<T>(User publisher, Func<IList<Post>, T> success, Func<string, T> fail)
         {
-            if (registeredUsers.Any(user => user.Equals(publisher)))
-                return success(publisher.Wall());
+            if (UserIsNotRegistered(publisher))
+                return fail(MSG_USER_DOES_NOT_EXIST);
 
-            return fail(MSG_USER_DOES_NOT_EXIST);
+            return success(publisher.Wall());
         }
 
         public IList<User> Users()
@@ -102,21 +102,23 @@ namespace OpenChat.Model
 
         public T Follow<T>(User follower, User followee, Func<User, T> success, Func<string, T> fail)
         {
-            if (registeredUsers.Any(user => user.Equals(follower))
-                && registeredUsers.Any(user => user.Equals(followee)))
-            {
-                return success(follower.Follow(followee));
-            }
+            if (UserIsNotRegistered(follower) || UserIsNotRegistered(followee))
+                return fail(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);
 
-            return fail(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);
+            return success(follower.Follow(followee));
         }
 
         public T FolloweesFor<T>(User user, Func<IList<User>, T> success, Func<string, T> fail)
         {
-            if (registeredUsers.Any(user => user.Equals(user))) 
-                return success(user.Followees());
+            if (UserIsNotRegistered(user))
+                return fail(MSG_USER_DOES_NOT_EXIST);
 
-            return fail(MSG_USER_DOES_NOT_EXIST);
+            return success(user.Followees());
+        }
+
+        private bool UserIsNotRegistered(User userToVerify)
+        {
+            return !registeredUsers.Any(user => user.Equals(userToVerify));
         }
     }
 }
