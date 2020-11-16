@@ -24,24 +24,17 @@ namespace OpenChat.Model
             this.clock = clock;
         }
 
-        public T RegisterUser<T>(string userName, string password, string about, Func<User, T> success, Func<string, T> fail)
+        public User RegisterUser(string userName, string password, string about)
         {
-            try
-            {
-                AssertNewUserNameIsNotRegistered(userName);
+            AssertNewUserNameIsNotRegistered(userName);
 
-                var credential = Credential.Create(password);
-                var user = User.Create(userName, about);
+            var credential = Credential.Create(password);
+            var user = User.Create(userName, about);
 
-                registeredUsers.Add(user);
-                registeredCredentials.Add(user, credential);
+            registeredUsers.Add(user);
+            registeredCredentials.Add(user, credential);
 
-                return success(user);
-            }
-            catch (Exception e)
-            {
-                return fail(e.Message);
-            }
+            return user;
         }
 
         public T LoginUser<T>(string userName, string password, Func<User, T> success, Func<string, T> fail)

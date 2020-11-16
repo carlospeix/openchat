@@ -29,9 +29,9 @@ namespace OpenChat.Api.Controllers
         [HttpPost("/openchat/registration")]
         public ObjectResult Registration([FromBody] RegistrationRequest request)
         {
-            return system.RegisterUser<ObjectResult>(request.username, request.password, request.about,
-                (user) => new CreatedResult($"/openchat/users/{user.Id}", new UserResult(user)),
-                (message) => new BadRequestObjectResult(message));
+            return DispatchRequest(
+                () => system.RegisterUser(request.username, request.password, request.about),
+                (user) => new CreatedResult($"/openchat/users/{user.Id}", new UserResult(user)));
         }
 
         [HttpPost("/openchat/login")]
@@ -88,6 +88,22 @@ namespace OpenChat.Api.Controllers
             return system.FolloweesFor<ObjectResult>(system.UserIdentifiedBy(userId),
                 (followees) => new OkObjectResult(followees.Select(user => new UserResult(user)).ToList()),
                 (message) => new BadRequestObjectResult(message));
+        }
+
+        public ObjectResult DispatchRequest<T>(Func<T> action, Func<T, ObjectResult> success)
+        {
+            try
+            {
+                return success(action.Invoke());
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return new BadRequestObjectResult(ioe.Message);
+            }
+            catch (Exception)
+            {
+                return new ObjectResult(null) { StatusCode = 500 };
+            }
         }
     }
     public class RegistrationRequest
