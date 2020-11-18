@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using OpenChat.Api.Controllers;
 using OpenChat.Model;
 using Xunit;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace OpenChat.Tests.Integration
 {
@@ -18,7 +19,7 @@ namespace OpenChat.Tests.Integration
         public ControllerTests()
         {
             clock = Clock.Simulated;
-            controller = new OpenChatController(new OpenChatSystem(clock));
+            controller = new OpenChatController(new OpenChatSystem(clock), NullLogger<OpenChatController>.Instance);
             
             aliceRegistrationRequest = new RegistrationRequest("Alice", "alki324d", "I love playing the piano and travelling.");
         }
@@ -296,6 +297,23 @@ namespace OpenChat.Tests.Integration
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, (HttpStatusCode)result.StatusCode);
             Assert.Equal(OpenChatSystem.MSG_USER_DOES_NOT_EXIST, result.Value);
+        }
+
+        [Fact]
+        public void Error500_WhenExceptionInsideSystem()
+        {
+            var localController = new OpenChatController(new OpenChatSystem(Clock.ThrowsException), NullLogger<OpenChatController>.Instance);
+            var registrationResult = localController.Registration(aliceRegistrationRequest);
+            var userResult = (UserResult)registrationResult.Value;
+            var userId = userResult.userId;
+
+            // Act
+            var request = new PublishPostRequest("Hello everyone. I'm Alice.");
+            var result = localController.PublishPost(userId, request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.InternalServerError, (HttpStatusCode)result.StatusCode);
+            Assert.Equal("An internal server error has ocurred and is registered for further investigation.", result.Value);
         }
 
         private Guid RegisterUser(string userName, string password, string about)

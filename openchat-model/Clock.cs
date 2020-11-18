@@ -6,6 +6,7 @@ namespace OpenChat.Model
     {
         public static Clock System => new Clock();
         public static Clock Simulated => new SimulatedClock();
+        public static Clock ThrowsException => new ThrowsExceptionClock();
 
         protected Clock()
         {
@@ -27,6 +28,16 @@ namespace OpenChat.Model
             public override void Set(DateTime dateTime)
             {
                 fakeNow = dateTime;
+            }
+        }
+
+        private class ThrowsExceptionClock : Clock
+        {
+            public override DateTime Now => throw new Exception("What are you doing here?");
+
+            public override void Set(DateTime dateTime)
+            {
+                throw new Exception("What are you doing here?");
             }
         }
     }

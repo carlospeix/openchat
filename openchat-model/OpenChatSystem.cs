@@ -64,12 +64,12 @@ namespace OpenChat.Model
             return registeredUsers.Where(user => user.IsIdentifiedBy(userId)).FirstOrDefault();
         }
 
-        public T PublishPost<T>(User publisher, string text, Func<Post, T> success, Func<string, T> fail)
+        public Post PublishPost(User publisher, string text)
         {
             if (UserIsNotRegistered(publisher))
-                return fail(MSG_USER_DOES_NOT_EXIST);
+                throw new InvalidOperationException(MSG_USER_DOES_NOT_EXIST);
 
-            return success(publisher.Publish(text, clock.Now));
+            return publisher.Publish(text, clock.Now);
         }
 
         public T TimelineFor<T>(User publisher, Func<IList<Post>, T> success, Func<string, T> fail)

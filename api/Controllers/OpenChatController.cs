@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OpenChat.Model;
 
 namespace OpenChat.Api.Controllers
@@ -9,10 +10,12 @@ namespace OpenChat.Api.Controllers
     public class OpenChatController : ControllerBase
     {
         private readonly OpenChatSystem system;
+        private readonly ILogger<OpenChatController> logger;
 
-        public OpenChatController(OpenChatSystem system)
+        public OpenChatController(OpenChatSystem system, ILogger<OpenChatController> logger)
         {
             this.system = system;
+            this.logger = logger;
         }
 
         [HttpGet("/openchat/")]
@@ -45,9 +48,9 @@ namespace OpenChat.Api.Controllers
         [HttpPost("/openchat/users/{userId}/posts")]
         public ObjectResult PublishPost([FromRoute] Guid userId, [FromBody] PublishPostRequest request)
         {
-            return system.PublishPost<ObjectResult>(system.UserIdentifiedBy(userId), request.text,
-                (post) => new CreatedResult($"/openchat/posts/{post.Id}", new PostResult(post)),
-                (message) => new BadRequestObjectResult(message));
+            return DispatchRequest(
+                () => system.PublishPost(system.UserIdentifiedBy(userId), request.text),
+                (post) => new CreatedResult($"/openchat/posts/{post.Id}", new PostResult(post)));
         }
 
         [HttpGet("/openchat/users/{userId}/timeline")]
@@ -100,9 +103,10 @@ namespace OpenChat.Api.Controllers
             {
                 return new BadRequestObjectResult(ioe.Message);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return new ObjectResult(null) { StatusCode = 500 };
+                logger.LogError(e, "Unhandled exception");
+                return new ObjectResult("An internal server error has ocurred and is registered for further investigation.") { StatusCode = 500 };
             }
         }
     }
