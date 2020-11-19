@@ -80,15 +80,17 @@ namespace OpenChat.Api.Controllers
         [HttpGet("/openchat/users")]
         public ObjectResult Users()
         {
-            return new OkObjectResult(system.Users().Select(user => new UserResult(user)).ToList());
+            return DispatchRequest(
+                () => system.Users(),
+                (users) => new OkObjectResult(users.Select(user => new UserResult(user)).ToList()));
         }
 
         [HttpGet("/openchat/users/{userId}/followees")]
         public ObjectResult Followees([FromRoute] Guid userId)
         {
-            return system.FolloweesFor<ObjectResult>(system.UserIdentifiedBy(userId),
-                (followees) => new OkObjectResult(followees.Select(user => new UserResult(user)).ToList()),
-                (message) => new BadRequestObjectResult(message));
+            return DispatchRequest(
+                () => system.FolloweesFor(system.UserIdentifiedBy(userId)),
+                (followees) => new OkObjectResult(followees.Select(user => new UserResult(user)).ToList()));
         }
 
         public ObjectResult DispatchRequest<T>(Func<T> action, Func<T, ObjectResult> success)
@@ -108,6 +110,7 @@ namespace OpenChat.Api.Controllers
             }
         }
     }
+
     public class RegistrationRequest
     {
         public RegistrationRequest(string userName, string password, string about)
@@ -121,7 +124,6 @@ namespace OpenChat.Api.Controllers
         public string password;
         public string about;
     }
-
     public class UserResult
     {
         public UserResult(User user)

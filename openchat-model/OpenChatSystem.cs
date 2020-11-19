@@ -101,12 +101,12 @@ namespace OpenChat.Model
             return follower.Follow(followee);
         }
 
-        public T FolloweesFor<T>(User user, Func<IList<User>, T> success, Func<string, T> fail)
+        public IList<User> FolloweesFor(User user)
         {
             if (UserIsNotRegistered(user))
-                return fail(MSG_USER_DOES_NOT_EXIST);
+                throw new InvalidOperationException(MSG_USER_DOES_NOT_EXIST);
 
-            return success(user.Followees());
+            return user.Followees();
         }
 
         private bool UserIsNotRegistered(User userToVerify)
