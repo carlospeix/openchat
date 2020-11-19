@@ -93,8 +93,7 @@ namespace OpenChat.Tests
             var follower = system.RegisterUser("Alice", "irrelevant", "");
             var followee = system.RegisterUser("Marta", "irrelevant", "");
 
-            _ = system.Follow(follower, followee,
-                (user) => user, (message) => default);
+            _ = system.Follow(follower, followee);
 
             Assert.Equal(1, follower.FolloweesCount());
         }
@@ -105,13 +104,10 @@ namespace OpenChat.Tests
             var follower = system.RegisterUser("Alice", "irrelevant", "");
             var nonExistingFollowee = User.Create("No existis");
 
-            _ = system.Follow<User>(follower, nonExistingFollowee,
-                (user) => throw new XunitException("Should had failed because of non existent followee."),
-                (message) => {
-                    Assert.Equal(OpenChatSystem.MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST, message);
-                    return default;
-                    });
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => _ = system.Follow(follower, nonExistingFollowee));
 
+            Assert.Equal(OpenChatSystem.MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST, exception.Message);
             Assert.Equal(0, follower.FolloweesCount());
         }
 
@@ -121,13 +117,10 @@ namespace OpenChat.Tests
             var nonExistingFollower = User.Create("No existis");
             var followee = system.RegisterUser("Alice", "irrelevant", "");
 
-            _ = system.Follow<User>(nonExistingFollower, followee, 
-                (user) => throw new XunitException("Should had failed because of non existent followee."), 
-                (message) => {
-                    Assert.Equal(OpenChatSystem.MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST, message);
-                    return default;
-                });
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => _ = system.Follow(nonExistingFollower, followee));
 
+            Assert.Equal(OpenChatSystem.MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST, exception.Message);
             Assert.Equal(0, nonExistingFollower.FolloweesCount());
         }
 
@@ -137,9 +130,8 @@ namespace OpenChat.Tests
             var follower = system.RegisterUser("Alice", "irrelevant", "");
             var followee = system.RegisterUser("Marta", "irrelevant", "");
 
-            _ = system.Follow(follower, followee, (user) => user, (message) => default);
-            _ = system.Follow(follower, followee, (user) => user,
-                (message) => throw new XunitException("Should had not failed because of duplicate follow."));
+            _ = system.Follow(follower, followee);
+            _ = system.Follow(follower, followee);
 
             Assert.Equal(1, follower.FolloweesCount());
         }

@@ -64,19 +64,17 @@ namespace OpenChat.Api.Controllers
         [HttpPost("/openchat/users/{followerId}/follow")]
         public IActionResult Follow([FromRoute] Guid followerId, [FromBody] FollowRequest request)
         {
-            return system.Follow<IActionResult>(
-                system.UserIdentifiedBy(followerId),
-                system.UserIdentifiedBy(request.followeeId), 
-                (follower) => new CreatedResult($"/openchat/users/{follower.Id}/followees", null),
-                (message) => new BadRequestObjectResult(message));
+            return DispatchRequest(
+                () => system.Follow(system.UserIdentifiedBy(followerId), system.UserIdentifiedBy(request.followeeId)),
+                (follower) => new CreatedResult($"/openchat/users/{follower.Id}/followees", null));
         }
 
         [HttpGet("/openchat/users/{userId}/wall")]
         public ObjectResult UserWall([FromRoute] Guid userId)
         {
-            return system.WallFor<ObjectResult>(system.UserIdentifiedBy(userId),
-                (wall) => new OkObjectResult(wall.Select(post => new PostResult(post)).ToList()),
-                (message) => new BadRequestObjectResult(message));
+            return DispatchRequest(
+                () => system.WallFor(system.UserIdentifiedBy(userId)),
+                (wall) => new OkObjectResult(wall.Select(post => new PostResult(post)).ToList()));
         }
 
         [HttpGet("/openchat/users")]

@@ -80,12 +80,12 @@ namespace OpenChat.Model
             return publisher.Timeline();
         }
 
-        public T WallFor<T>(User publisher, Func<IList<Post>, T> success, Func<string, T> fail)
+        public IList<Post> WallFor(User publisher)
         {
             if (UserIsNotRegistered(publisher))
-                return fail(MSG_USER_DOES_NOT_EXIST);
+                throw new InvalidOperationException(MSG_USER_DOES_NOT_EXIST);
 
-            return success(publisher.Wall());
+            return publisher.Wall();
         }
 
         public IList<User> Users()
@@ -93,12 +93,12 @@ namespace OpenChat.Model
             return registeredUsers.AsReadOnly();
         }
 
-        public T Follow<T>(User follower, User followee, Func<User, T> success, Func<string, T> fail)
+        public User Follow(User follower, User followee)
         {
             if (UserIsNotRegistered(follower) || UserIsNotRegistered(followee))
-                return fail(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);
+                throw new InvalidOperationException(MSG_FOLLOWER_OR_FOLLOWEE_DOES_NOT_EXIST);
 
-            return success(follower.Follow(followee));
+            return follower.Follow(followee);
         }
 
         public T FolloweesFor<T>(User user, Func<IList<User>, T> success, Func<string, T> fail)
