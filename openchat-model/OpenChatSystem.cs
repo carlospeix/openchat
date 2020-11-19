@@ -72,12 +72,12 @@ namespace OpenChat.Model
             return publisher.Publish(text, clock.Now);
         }
 
-        public T TimelineFor<T>(User publisher, Func<IList<Post>, T> success, Func<string, T> fail)
+        public IList<Post> TimelineFor(User publisher)
         {
             if (UserIsNotRegistered(publisher))
-                return fail(MSG_USER_DOES_NOT_EXIST);
+                throw new InvalidOperationException(MSG_USER_DOES_NOT_EXIST);
 
-            return success(publisher.Timeline());
+            return publisher.Timeline();
         }
 
         public T WallFor<T>(User publisher, Func<IList<Post>, T> success, Func<string, T> fail)

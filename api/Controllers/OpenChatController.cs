@@ -56,9 +56,9 @@ namespace OpenChat.Api.Controllers
         [HttpGet("/openchat/users/{userId}/timeline")]
         public ObjectResult UserTimeline([FromRoute] Guid userId)
         {
-            return system.TimelineFor<ObjectResult>(system.UserIdentifiedBy(userId),
-                (timeline) => new OkObjectResult(timeline.Select(post => new PostResult(post)).ToList()),
-                (message) => new BadRequestObjectResult(message));
+            return DispatchRequest(
+                () => system.TimelineFor(system.UserIdentifiedBy(userId)),
+                (timeline) => new OkObjectResult(timeline.Select(post => new PostResult(post)).ToList()));
         }
 
         [HttpPost("/openchat/users/{followerId}/follow")]
