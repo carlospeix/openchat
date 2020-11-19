@@ -21,12 +21,7 @@ namespace OpenChat.Api.Controllers
         [HttpGet("/openchat/")]
         public object GetStatus()
         {
-            var responseObject = new
-            {
-                status = "Up"
-            };
-
-            return responseObject;
+            return new { status = "Up" };
         }
 
         [HttpPost("/openchat/registration")]

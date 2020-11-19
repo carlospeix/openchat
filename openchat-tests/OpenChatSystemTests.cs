@@ -102,7 +102,7 @@ namespace OpenChat.Tests
         public void Follow_CanNotFollowNonExistentFollowee()
         {
             var follower = system.RegisterUser("Alice", "irrelevant", "");
-            var nonExistingFollowee = User.Create("No existis");
+            var nonExistingFollowee = User.Create("No existís");
 
             var exception = Assert.Throws<InvalidOperationException>(
                 () => _ = system.Follow(follower, nonExistingFollowee));
@@ -114,7 +114,7 @@ namespace OpenChat.Tests
         [Fact]
         public void Follow_NonExistenFollowerCanNotFollow()
         {
-            var nonExistingFollower = User.Create("No existis");
+            var nonExistingFollower = User.Create("No existís");
             var followee = system.RegisterUser("Alice", "irrelevant", "");
 
             var exception = Assert.Throws<InvalidOperationException>(

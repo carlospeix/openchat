@@ -15,12 +15,6 @@ namespace OpenChat.Tests
         }
 
         [Fact]
-        public void CanCreateNewUser()
-        {
-            Assert.NotNull(carlos);
-        }
-
-        [Fact]
         public void NewUserHasProperNameAboutAndId()
         {
             Assert.False(carlos.IsIdentifiedBy(Guid.Empty));

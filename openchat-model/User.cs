@@ -50,6 +50,7 @@ namespace OpenChat.Model
         {
             if (!followees.Contains(followee))
                 followees.Add(followee);
+
             return this;
         }
 

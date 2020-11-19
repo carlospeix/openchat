@@ -56,8 +56,8 @@ namespace OpenChat.Tests.Integration
         }
 
         // Login
-        // POST - openchat/login { "username" : "Alice" "password" : "alki324d" }
-        // Success Status OK - 200 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" "username" : "Alice", "about" : "I love playing the piano and travelling." }
+        // POST - openchat/login { "username" : "Alice", "password" : "alki324d" }
+        // Success Status OK - 200 Response: { "userId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "username" : "Alice", "about" : "I love playing the piano and travelling." }
         // Failure Status: BAD_REQUEST - 400 Response: "Invalid credentials."
         [Fact]
         public async Task User_LoginSuccess()
